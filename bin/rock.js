@@ -2,8 +2,10 @@
 
 var inspect = require("util").inspect;
 var program = require("commander");
+var colors = require("colors");
 
-console.log("RockUp");
+console.log("\nRockUp".green.bold + ": Faceted Meteor Deployments".green);
+console.log("----------------------------------".green);
 
 program
   .version("0.0.1")
