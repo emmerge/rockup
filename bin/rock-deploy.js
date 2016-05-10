@@ -1,15 +1,11 @@
 #!/usr/bin/env node
 
 var inspect = require("util").inspect;
-var fs = require('fs');
+var _ = require("underscore");
 var program = require("commander");
-
-var nodemiral = require("nodemiral");
 
 var Config = require("../lib/Config.js");
 var Deploy = require("../lib/Deploy.js");
-
-console.log("Deploy:", inspect(Deploy, {colors: true}));
 
 program
   .arguments("<environment>")
@@ -17,64 +13,29 @@ program
   .option("-h, --host <name>", "The specific host to target")
   .option("-s, --service <name>", "A specific host service to target")
   .action( function(env) {
-
-    try {
-
-      console.log("Deploying to environment:", env);
+    // try {
 
       var config = new Config(env);
-      console.log("Configuration:", inspect(config, {colors: true}));
-      console.log("Configuration Obj: ", inspect(config.getConfig(), {colors:true}));
+      //console.log("Configuration:", inspect(config, {colors: true, depth: null}));
+      console.log("Configuration Obj: ", inspect(config._config, {colors:true, depth: null}));
 
-    } catch (err) {
-      console.log("Fatal error".red);
-      return;
-    }
+      console.log("Configuration defines hosts:", config.hostNames());
 
-    return;
-
-    var deploy = new Deploy();
-    console.log("Deployer: ", inspect(deploy, {colors: true}));
-
-
-    // Load configuration
-
-    // Build Meteor Bundle
-
-    // Copy Bundle to Host(s)
-    // Per-Service
-
-    // Run Commands
-
-    var server = {
-      host:       "proc1.emmerge.com",
-      username:   "ubuntu"
-    };
-
-    var session = nodemiral.session(
-      server.host, 
-      {username: server.username}, 
-      {
-        ssh: { agent: process.env.SSH_AUTH_SOCK },
-        keepAlive: false
-      }
-    );
-
-    session.execute('uname -a', function(err, code, logs) {
-      console.log(logs.stdout);
-      if (err) {
-        console.log("Error uname: "+inspect(err).red);
-        return;
-      } else {
-        session.execute('uptime', function(err, code, logs) {
-          console.log(logs.stdout);
-          if (err) {
-            console.log("Error uptime: "+inspect(err).red);
-            return;
-          }
+      _.each( config.hosts(), function(host) {
+        console.log(("Host "+host.name).yellow, ":", inspect(host));
+        console.log("Services".blue, ":", config.serviceNames(host.name));
+        
+        _.each( config.services(host.name), function(service) {
+          console.log(("Service "+service.name).cyan, ":", inspect(service));
         });
-      }
-    });
+      });
+
+      console.log("thred3 on app2:", inspect( config.service('app2.emmerge.com', 'thred-3') ) );
+
+    // } catch (err) {
+    //   console.error("Fatal error: ".red + inspect(err, {colors: true}));
+    //   process.exit(1);
+    // }
 
   });
 

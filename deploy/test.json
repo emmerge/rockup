@@ -31,7 +31,10 @@
         { "name": "thred-1", "env": { "PORT": 8201 } },
         { "name": "thred-2", "env": { "PORT": 8202 } },
         { "name": "thred-3", "env": { "PORT": 8203 } }
-      ]
+      ],
+      "confs": {
+        "upstart": "./conf/myupstart.json"
+      }
     },
     {
       "name": "app2.emmerge.com",
