@@ -19,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "colors": "^1.1.2",
-    "commander": "^2.9.0"
+    "commander": "^2.9.0",
+    "nodemiral": "^1.1.1"
   }
 }

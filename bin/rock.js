@@ -5,7 +5,7 @@ var program = require("commander");
 var colors = require("colors");
 
 console.log("\nRockUp".green.bold + ": Faceted Meteor Deployments".green);
-console.log("----------------------------------".green);
+console.log("----------------------------------".green+"\n");
 
 program
   .version("0.0.1")
