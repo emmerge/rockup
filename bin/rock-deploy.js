@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 var inspect = require("util").inspect;
-var _ = require("underscore");
 var program = require("commander");
 
 var Config = require("../lib/Config.js");
@@ -16,21 +15,9 @@ program
     // try {
 
       var config = new Config(env);
-      //console.log("Configuration:", inspect(config, {colors: true, depth: null}));
-      console.log("Configuration Obj: ", inspect(config._config, {colors:true, depth: null}));
 
-      console.log("Configuration defines hosts:", config.hostNames());
+      Deploy.deploy(config);
 
-      _.each( config.hosts(), function(host) {
-        console.log(("Host "+host.name).yellow, ":", inspect(host));
-        console.log("Services".blue, ":", config.serviceNames(host.name));
-        
-        _.each( config.services(host.name), function(service) {
-          console.log(("Service "+service.name).cyan, ":", inspect(service));
-        });
-      });
-
-      console.log("thred3 on app2:", inspect( config.service('app2.emmerge.com', 'thred-3') ) );
 
     // } catch (err) {
     //   console.error("Fatal error: ".red + inspect(err, {colors: true}));
