@@ -1,5 +1,4 @@
 {
-  // Define the Application:
   "app": {
     "name": "thred",
     "path": "../app",
@@ -8,7 +7,6 @@
     }
   },
 
-  // Set Per-Host Defaults:
   "defaults": {
     "hosts": {
       "username": "ubuntu"
@@ -25,7 +23,6 @@
     }
   },
 
-  // Define Hosts and Services:
   "hosts": [
     {
       "name": "app1.emmerge.com",
