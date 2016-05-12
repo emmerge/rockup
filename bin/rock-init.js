@@ -14,6 +14,9 @@ program
 
     Config.initialize(appName, environment);
 
+    // TODO: Upstart configuration template copy
+    // TODO: Nginx configuration template copy
+
   });
 
 program.parse(process.argv);
