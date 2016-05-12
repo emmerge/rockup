@@ -8,9 +8,9 @@ var Deploy = require("../lib/Deploy.js");
 
 program
   .arguments("<environment>")
-  .option("-f, --force", "Force the deployment to go through")
   .option("-h, --host <name>", "The specific host to target")
   .option("-s, --service <name>", "A specific host service to target")
+  .option("-f, --force", "Force the deployment to go through")
   .action( function(env) {
     // try {
 
