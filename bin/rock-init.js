@@ -1,14 +1,19 @@
 #!/usr/bin/env node
 
 var program = require("commander");
+var colors = require("colors");
+
+var Config = require("../lib/Config");
 
 program
-  .alias("create")
-  .arguments("[app] [environment]")
+  .arguments("<app> <environment>")
   .option("--skip-upstart", "Don't include upstart configuration")
   .option("--skip-nginx", "Don't include nginx configuration")
-  .action( function(app, environment) {
-    console.log("Creating", environment.cyan, "rockup file for", app.cyan, "app");
+  .action( function(appName, environment) {
+    console.log("Creating", environment.cyan, "rockup file for", appName.cyan, "app");
+
+    Config.initialize(appName, environment);
+
   });
 
 program.parse(process.argv);

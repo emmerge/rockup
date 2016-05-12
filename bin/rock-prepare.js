@@ -4,7 +4,7 @@ var inspect = require("util").inspect;
 var program = require("commander");
 
 program
-  .arguments("[environment]")
+  .arguments("<environment>")
   .action( function(env) {
     console.log("Preparing environment:", env);
   });
