@@ -10,8 +10,10 @@ console.log("----------------------------------".green+"\n");
 program
   .version("0.0.1")
   .description("Faceted deployment and configuration management for Meteor applications")
-  .command("test", "Display test output")
   .command("deploy [environment]", "Deploy application to environment")
-  .command("prepare <environment>", "Prepare a server host to accept deployments");
+  .command("init [app] [environment]", "Initialize a local configuration")
+  .command("prepare [environment]", "Prepare a server host to accept deployments");
+
+// console.log("Program:\n", inspect(program, {colors: true, depth: null}));
 
 program.parse(process.argv);
