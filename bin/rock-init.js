@@ -10,12 +10,10 @@ program
   .option("--skip-upstart", "Don't include upstart configuration")
   .option("--skip-nginx", "Don't include nginx configuration")
   .action( function(appName, environment) {
+    
     console.log("Creating", environment.cyan, "rockup file for", appName.cyan, "app");
-
-    Config.initialize(appName, environment);
-
-    // TODO: Upstart configuration template copy
-    // TODO: Nginx configuration template copy
+    var files = ['rockup','meteor'];  // upstart, nginx
+    Config.initialize(appName, environment, files);
 
   });
 
