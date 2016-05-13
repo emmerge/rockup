@@ -6,6 +6,7 @@ var colors = require("colors");
 var _ = require("underscore");
 
 var Config = require("../lib/Config");
+var Host = require("../lib/Host");
 var Deploy = require("../lib/Deploy");
 
 console.log( ("\nRockUp".green.bold + ": Faceted Meteor Deployments".green).underline );
@@ -36,7 +37,16 @@ program
   .alias("prep")
   .description("Prepare a server host to accept deployments")
   .action( function(env, options) {
-    console.log("Will prepare environment:", env);
+    var config = new Config(env);
+    var appName = config.appName();
+    var hostNames = config.hostNames();
+
+    _.each( hostNames, function(hostName) {
+      var host = new Host(config, hostName);
+      console.log("Preparing host "+hostName+" to accept app "+appName+"...");
+      host.prepare();
+      console.log("Prep complete for host "+hostName);
+    });
   });
 
 /** deploy: Push code and configuration to server(s) **/
