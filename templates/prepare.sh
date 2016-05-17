@@ -3,6 +3,8 @@
 # RockUp
 # Prepare Script -- Run on target server to prepare filesystem
 #  to handle deployments from RockUp
+#
+# This script for <%= appName %> <%= envName %>: <%= hostName %>
 
 error () {
   local parent_lineno="$1"
@@ -23,15 +25,9 @@ trap 'error ${LINENO}' ERR
 
 # Create /opt dirs to store app code:
 sudo mkdir -p /opt/<%= appName %>/
-sudo mkdir -p /opt/<%= appName %>/config
-sudo mkdir -p /opt/<%= appName %>/tmp
+sudo mkdir -p /opt/<%= appName %>/releases
+sudo mkdir -p /opt/<%= appName %>/bundles
 sudo chown ${USER} /opt/<%= appName %> -R
-
-# Create /etc/rockup dir to store app config, tmp, bundles
-sudo mkdir -p /etc/rockup/<%= appName %>/config
-sudo mkdir -p /etc/rockup/<%= appName %>/bundle
-sudo mkdir -p /etc/rockup/<%= appName %>/tmp
-sudo chown ${USER} /etc/rockup/<%= appName %> -R
 
 # Ownership /etc upstart dirs:
 sudo chown ${USER} /etc/init

@@ -38,14 +38,11 @@ program
   .description("Prepare a server host to accept deployments")
   .action( function(env, options) {
     var config = new Config(env);
-    var appName = config.appName();
     var hostNames = config.hostNames();
-
+    console.log("Will prepare "+hostNames.length+" host(s) for deployment:", inspect(hostNames));
     _.each( hostNames, function(hostName) {
       var host = new Host(config, hostName);
-      console.log("Preparing host "+hostName+" to accept app "+appName+"...");
       host.prepare();
-      console.log("Prep complete for host "+hostName);
     });
   });
 
@@ -59,7 +56,8 @@ program
   .option("-f, --force", "Force the deployment to go through")
   .action( function(env, options) {
       var config = new Config(env);
-      Deploy.deploy(config);
+      var deployment = new Deploy(config);
+      deployment.push();
   });
 
 /** rollback: Roll server back to a previously deployed version **/
