@@ -51,12 +51,13 @@ program
   .command("deploy <environment>")
   .alias("push")
   .description("Deploy application to environment")
-  .option("-h, --host <name>", "The specific host to target")
-  .option("-s, --service <name>", "A specific host service to target")
-  .option("-f, --force", "Force the deployment to go through")
-  .action( function(env, options) {
+  .option("--host <name>", "The specific host to target")
+  .action( function(env, cliOptions) {
       var config = new Config(env);
-      var deployment = new Deploy(config);
+      var options = {};
+      if (cliOptions && cliOptions.host)
+        options.hosts = [cliOptions.host];
+      var deployment = new Deploy(config, options);
       deployment.push();
   });
 
