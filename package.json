@@ -18,6 +18,7 @@
   "author": "Emmerge, Inc.",
   "license": "ISC",
   "dependencies": {
+    "archiver": "^1.0.0",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
     "nodemiral": "^1.1.1",

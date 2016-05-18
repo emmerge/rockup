@@ -58,7 +58,9 @@ program
       if (cliOptions && cliOptions.host)
         options.hosts = [cliOptions.host];
       var deployment = new Deploy(config, options);
-      deployment.push();
+      deployment.push( function() {
+        console.log("Deployment complete.");
+      });
   });
 
 /** rollback: Roll server back to a previously deployed version **/
