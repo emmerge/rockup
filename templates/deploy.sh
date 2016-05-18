@@ -7,7 +7,6 @@ app_name="<%= appName %>"
 release_name="<%= releaseName %>"
 app_parent_dir="/opt/${app_name}"
 app_release_dir="${app_parent_dir}/releases/${release_name}"
-declare -a service_names=(<%= serviceNames %>)
 
 # PRE: app_release_dir exists
 # PRE: app_release_dir contains bundle.tar.gz
@@ -24,7 +23,38 @@ sudo mv bundle app                                  # Rename bundle app (target 
 
 # 2. Rebuild app npm/node dependencies
 
-# TODO
+rebuild_modules () {
+  MODULE_DIR="$1"
+
+  check_for_binary_modules () {
+
+  }
+
+  build_dependency_modules () {
+
+  }
+
+  build_primary_modules () {
+
+  }
+
+  cd ${MODULE_DIR}
+  if [ -d ./npm ]; then
+    cd npm
+    build_binary_npm_modules
+    cd -
+  fi
+
+  if [ -d ./node_modules ]; then
+    cd ./node_modules
+    build_dependency_modules
+    cd -
+  fi
+
+  if [ -f package.json ]; then
+    sudo npm install
+  fi
+}
 
 # 3. Symlink app_parent_dir/current => app_release_dir/app
 
@@ -36,11 +66,11 @@ sudo ln -s ${app_release_dir} ./current             # Creates new current link t
 
 # 4. For each service, restart the service
 
-for service_name in "${service_names[@]}"; do
-  echo "Starting Service: ${service_name}"
-  sudo stop <%= appName %> || :
-  sudo start <%= appName %> || :
-done
+<% for(var service in serviceNames) { %>
+  echo "Starting Service: <%= service %>"
+  sudo stop <%= service %> || :
+  sudo start <%= service %> || :
+<% } %>
 
 # chown to support dumping heapdump and etc
 cd ${app_release_dir}
