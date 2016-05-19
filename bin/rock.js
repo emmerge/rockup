@@ -112,7 +112,7 @@ program
 
 /** Catch-all for unhandled commands: **/
 program
-  .command("*")
+  .command("*", null, {noHelp: true})
   .action( function(command, options) {
     var commandDef = _.findWhere(program.commands, {_name: command});
     if (commandDef)
