@@ -62,11 +62,15 @@ program
   .alias("push")
   .description("Deploy application to environment")
   .option("--host <name>", "The specific host to target")
+  .option("--bundle <path>", "Deploy a bundle.tar.gz already in-hand")
   .action( function(env, cliOptions) {
       var config = new Config(env);
+      cliOptions = cliOptions || {};
       var options = {};
-      if (cliOptions && cliOptions.host)
-        options.hosts = [cliOptions.host];
+      if ( cliOptions.host )
+        options.hosts = [cliOptions.host];            // Target a single host
+      if ( cliOptions.bundle )
+        options.bundle = cliOptions.bundle;           // Use an already-tarred app bundle
       var deployment = new Deploy(config, options);
       deployment.push( function() {
         console.log("Deployment complete.");
