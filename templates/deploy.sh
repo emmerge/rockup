@@ -27,15 +27,15 @@ rebuild_modules () {
   MODULE_DIR="$1"
 
   check_for_binary_modules () {
-
+    echo "TODO"
   }
 
   build_dependency_modules () {
-
+    echo "TODO"
   }
 
   build_primary_modules () {
-
+    echo "TODO"
   }
 
   cd ${MODULE_DIR}
