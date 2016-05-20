@@ -62,7 +62,7 @@ cd ${app_parent_dir}
 sudo rm -f current                                  # Removes existing current link /opt/<%=appName%>/current
 sudo ln -s ${app_release_dir} ./current             # Creates new current link to new release
 
-# PRE: app_release_dir/config contains boot.sh and settings.json for each service
+# PRE: app_release_dir/config contains env.sh and settings.json for each service
 
 # 4. For each service, restart the service
 
