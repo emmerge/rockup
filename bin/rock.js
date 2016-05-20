@@ -72,8 +72,15 @@ program
       if ( cliOptions.bundle )
         options.bundle = cliOptions.bundle;           // Use an already-tarred app bundle
       var deployment = new Deploy(config, options);
-      deployment.push( function() {
-        console.log("Deployment complete.");
+      deployment.push( function(err) {
+        if (err) {
+          console.log("Deployment failed:".red.bold, inspect(err).red);
+          process.exit(1);
+        }
+        else {
+          console.log("Deployment succeeded!".green.bold);
+          process.exit(0);
+        }
       });
   });
 
