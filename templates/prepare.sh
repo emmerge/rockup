@@ -21,12 +21,9 @@ trap 'error ${LINENO}' ERR
 
 #----------------------------------------------------------
 
-# TODO: Ensure idempotent if run subsequently against same host
-
 # Create /opt dirs to store app code:
 sudo mkdir -p /opt/<%= appName %>/
 sudo mkdir -p /opt/<%= appName %>/releases
-sudo mkdir -p /opt/<%= appName %>/bundles
 sudo chown ${USER} /opt/<%= appName %> -R
 
 # Ownership /etc upstart dirs:
