@@ -1,4 +1,5 @@
 {
+  "environment": "production",
   "app": {
     "name": "thred",
     "path": "../app",
