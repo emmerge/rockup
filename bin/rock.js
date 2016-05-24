@@ -3,11 +3,13 @@
 var program = require("commander");
 var inspect = require("util").inspect;
 var colors = require("colors");
+var path = require("path");
 var _ = require("underscore");
 
 var Config = require("../lib/Config");
 var Host = require("../lib/Host");
 var Deploy = require("../lib/Deploy");
+var Service = require("../lib/Service");
 
 console.log( ("\nRockUp".green.bold + ": Faceted Meteor Deployments".green).underline );
 
@@ -25,6 +27,28 @@ program
     _.each( Config.list(), function(envName) {
       console.log(" -", envName);
     });
+  });
+
+/** lint: Lint a configuration file **/
+program
+  .command("lint <environment>")
+  .description("Check configuration file for issues")
+  .action( function(env, cliOptions) {
+    var filePath = path.resolve( process.cwd(), 'deploy', env+'.rockup.json' );
+    var config = new Config(filePath);
+    console.log("Configuration:\n", inspect(config, {colors:true, depth:null}));
+
+    console.log("app:", config.app);
+    console.log("appName:", config.app.name);
+    console.log("appPath:", config.app.path);
+    console.log("hosts.list:", config.hosts.list);
+    console.log("hosts.names:", config.hosts.names);
+    console.log("host.get():", config.hosts.get('dev2.emmerge.com'));
+    console.log("host.sshOptions():", config.hosts.get('dev2.emmerge.com').sshConfig());
+    console.log("services:", config.services('dev2.emmerge.com'));
+    console.log("service:", config.service('dev2.emmerge.com', 'bennett-1'));
+
+    console.log("host.services.tasks.status:", config.hosts.get('dev2.emmerge.com').services.tasks.status());
   });
 
 /** init: Initializes local configuration **/
@@ -96,10 +120,41 @@ program
   .command("reconfig <environment>")
   .description("Push configuration only and restart");
 
-/** ps: Run status, start, stop, restart commands against services **/
+/** start, stop, restart: Run start, stop, restart commands against services **/
+_.each(["start", "stop", "restart"], function(command) {
+  program
+    .command(command+" <environment>")
+    .option("--host <name>", "The specific host to target")
+    .option("--service <name>", "The specific service to target")
+    .action( function(env, cliOptions) {
+      console.log(command+" the service in "+env);
+    });
+});
+
+/** status: Dislay status informatin for services **/
 program
-  .command("ps <cmd> <environment>")
-  .description("Status, Start, Stop, Restart service processes");
+  .command("status <environment>")
+  .description("Display a status for services in environment")
+  .option("--host <name>", "A specific host to target")
+  .option("--service <name>", "A specific service to target")
+  .action( function(env, cliOptions) {
+    var config = new Config(env);
+    if ( cliOptions.host ) {
+      var host = new Host(config, cliOptions.host);
+      console.log("Working on host:", inspect(host));
+      host.status( function(err, results) {
+        if (err) { _endCommandCallback(err); }
+        else {
+          console.log("Status results:", inspect(results, {colors:true}));
+          process.exit(0);
+        }
+      });
+
+    } else {
+      console.log("Can't do it for everyone, yet. Pass a --host");
+    }
+
+  });
 
 /** logs: Tail service logs from hosts **/
 program
