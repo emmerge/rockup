@@ -142,14 +142,11 @@ program
   .action( function(env, cliOptions) {
     var config = _loadLocalConfigFile(env);
     if ( cliOptions.host ) {
-      var host = new Host(config, cliOptions.host);
-      console.log("Working on host:", inspect(host));
-      host.status( function(err, results) {
-        if (err) { _endCommandCallback(err); }
-        else {
-          console.log("Status results:", inspect(results, {colors:true}));
-          process.exit(0);
-        }
+      var host = config.hosts.get( cliOptions.host );
+      console.log("Working on host:", host.name);
+      host.services.run.status( function(results) {
+        console.log("Results:\n", inspect(results, {colors:true, depth:null}));
+        process.exit(0);
       });
 
     } else {
