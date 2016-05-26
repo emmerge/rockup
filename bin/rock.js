@@ -18,16 +18,11 @@ program
   .version("0.0.1")
   .description("Faceted deployment and configuration management for Meteor applications");
 
-/** list: List all of the target environments available locally **/
-program
-  .command("list")
-  .description("List target environments available")
-  .action( function () {
-    console.log("Available Environments:");
-    _.each( Config.list(), function(envName) {
-      console.log(" -", envName);
-    });
-  });
+commands = {
+  list: require('../commands/rock-list')
+};
+
+commands.list(program);
 
 /** lint: Lint a configuration file **/
 program
