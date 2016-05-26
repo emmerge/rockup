@@ -1,54 +1,32 @@
 #!/usr/bin/env node
 
 var program = require("commander");
-var inspect = require("util").inspect;
 var colors = require("colors");
-var path = require("path");
 var _ = require("underscore");
-
-var Config = require("../lib/Config");
-var Host = require("../lib/Host");
-var Deploy = require("../lib/Deploy");
-var Service = require("../lib/Service");
 
 console.log( ("\nRockUp".green.bold + ": Faceted Meteor Deployments".green).underline, "\n" );
 
-/** Define RockUp CLI **/
+// Define CLI program:
 program
   .version("0.0.1")
   .description("Faceted deployment and configuration management for Meteor applications");
 
+// Define sub-commands:
 commands = {
   list:     require('../commands/rock-list'),
   lint:     require('../commands/rock-lint'),
   init:     require('../commands/rock-init'),
-  prepare:  require('../commands/rock-prepare')
+  prepare:  require('../commands/rock-prepare'),
+  deploy:   require('../commands/rock-deploy'),
 };
 
+// Attach sub-commands:
 commands.list(program);
 commands.lint(program);
 commands.init(program);
 commands.prepare(program);
+commands.deploy(program);
 
-
-/** deploy: Push code and configuration to server(s) **/
-program
-  .command("deploy <environment>")
-  .alias("push")
-  .description("Deploy application to environment")
-  .option("--host <name>", "The specific host to target")
-  .option("--bundle <path>", "Deploy a bundle.tar.gz already in-hand")
-  .action( function(env, cliOptions) {
-      var config = _loadLocalConfigFile(env);
-      cliOptions = cliOptions || {};
-      var options = {};
-      if ( cliOptions.host )
-        options.hosts = [cliOptions.host];            // Target a single host
-      if ( cliOptions.bundle )
-        options.bundle = cliOptions.bundle;           // Use an already-tarred app bundle
-      var deployment = new Deploy(config, options);
-      deployment.push( _endCommandCallback("Deployment") );
-  });
 
 /** rollback: Roll server back to a previously deployed version **/
 program
