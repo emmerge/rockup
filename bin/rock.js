@@ -127,6 +127,9 @@ _.each(["start", "stop", "restart"], function(command) {
     .option("--service <name>", "The specific service to target")
     .action( function(env, cliOptions) {
       var config = _loadLocalConfigFile(env);
+      _.each(config.hosts.list, function(host) {
+        host.services.tasks[command]( _endCommandCallback(command) );
+      });
     });
 });
 
