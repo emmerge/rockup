@@ -18,6 +18,7 @@ commands = {
   init:     require('../commands/rock-init'),
   prepare:  require('../commands/rock-prepare'),
   deploy:   require('../commands/rock-deploy'),
+  rollback: require('../commands/rock-rollback')
 };
 
 // Attach sub-commands:
@@ -26,23 +27,7 @@ commands.lint(program);
 commands.init(program);
 commands.prepare(program);
 commands.deploy(program);
-
-
-/** rollback: Roll server back to a previously deployed version **/
-program
-  .command("rollback <environment>")
-  .alias("undo")
-  .description("Rollback to a previous deployment")
-  .option("-r, --release <name>", "Name of release to roll back to (defaults to previous)")
-  .action( function(env, options) {
-    var targetRelease = options.release;
-    if (! targetRelease) {
-      targetRelease = "previous";     // TODO: Retrieve most recent release from history
-    }
-    console.log( "Will rollback to".red, targetRelease.red.bold.underline, "release.".red );
-    var config = new _loadLocalConfigFile(env);
-    //Deploy.rollback(config);
-  });
+commands.rollback(program);
 
 /** reconfig: Push only configuration changes and restart **/
 program
