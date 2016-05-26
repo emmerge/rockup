@@ -19,31 +19,12 @@ program
   .description("Faceted deployment and configuration management for Meteor applications");
 
 commands = {
-  list: require('../commands/rock-list')
+  list: require('../commands/rock-list'),
+  lint: require('../commands/rock-lint')
 };
 
 commands.list(program);
-
-/** lint: Lint a configuration file **/
-program
-  .command("lint <environment>")
-  .description("Check configuration file for issues")
-  .action( function(env, cliOptions) {
-    var config = _loadLocalConfigFile(env);
-    console.log("Configuration:\n", inspect(config, {colors:true, depth:null}));
-
-    console.log("app:", config.app);
-    console.log("appName:", config.app.name);
-    console.log("appPath:", config.app.path);
-    console.log("hosts.list:", config.hosts.list);
-    console.log("hosts.names:", config.hosts.names);
-    console.log("host.get():", config.hosts.get('dev2.emmerge.com'));
-    console.log("host.sshOptions():", config.hosts.get('dev2.emmerge.com').sshConfig());
-    console.log("services:", config.services('dev2.emmerge.com'));
-    console.log("service:", config.service('dev2.emmerge.com', 'bennett-1'));
-
-    console.log("host.services.tasks.status:", config.hosts.get('dev2.emmerge.com').services.tasks.status());
-  });
+commands.lint(program);
 
 /** init: Initializes local configuration **/
 program
@@ -210,18 +191,6 @@ program
 
 program.parse(process.argv);
 
-
-/**
- * Load RockUp configuration file from the expected path relative to
- * this process' working directory.
- *
- * @param {String} environment  Name of target environment
- * @returns {Config}            RockUp Config object
- * @throws Errors associated with loading Config (non-exist, syntax)
- **/
-function _loadLocalConfigFile (environment) {
-  return new Config( path.resolve( process.cwd(), 'deploy', environment+'.rockup.json' ) );
-}
 
 /**
  * Generate a callback function to be used in the CLI context as a
