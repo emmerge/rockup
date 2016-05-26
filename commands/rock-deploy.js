@@ -1,8 +1,9 @@
 // RockUp
-// Commands-Deply -- Push code and configuration to target servers
+// Commands-Deploy -- Push code and configuration to target servers
 
-var Config = require('../lib/Config');
 var RockUtil = require('./util');
+var Config = require('../lib/Config');
+var Deploy = require('../lib/Deploy');
 
 module.exports = DeployCommand;
 
