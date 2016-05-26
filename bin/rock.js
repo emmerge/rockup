@@ -11,7 +11,7 @@ var Host = require("../lib/Host");
 var Deploy = require("../lib/Deploy");
 var Service = require("../lib/Service");
 
-console.log( ("\nRockUp".green.bold + ": Faceted Meteor Deployments".green).underline );
+console.log( ("\nRockUp".green.bold + ": Faceted Meteor Deployments".green).underline, "\n" );
 
 /** Define RockUp CLI **/
 program
