@@ -20,25 +20,13 @@ program
 
 commands = {
   list: require('../commands/rock-list'),
-  lint: require('../commands/rock-lint')
+  lint: require('../commands/rock-lint'),
+  init: require('../commands/rock-init')
 };
 
 commands.list(program);
 commands.lint(program);
-
-/** init: Initializes local configuration **/
-program
-  .command("init <environment>")
-  .description("Initialize a local configuration")
-  .option("--upstart", "Add upstart configuration template")
-  .option("--nginx", "Add nginx configuration template")
-  .action( function(env, options) {
-    console.log("Creating local rockup configs for ", env.cyan, "environment");
-    var files = ['rockup','meteor'];  // upstart, nginx
-    if (options.upstart) files.push('upstart');
-    if (options.nginx) files.push('nginx');
-    Config.initialize(env, files);
-  });
+commands.init(program);
 
 /** prepare: Preps server to accept deployments **/
 program
