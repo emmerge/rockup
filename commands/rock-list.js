@@ -5,9 +5,9 @@ var _ = require('underscore');
 var path = require('path');
 var Config = require('../lib/Config');
 
-module.exports = addCommand;
+module.exports = ListCommand;
 
-function addCommand (program) {
+function ListCommand (program) {
   program
     .command("list")
     .description("List target environments available")
