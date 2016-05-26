@@ -19,29 +19,17 @@ program
   .description("Faceted deployment and configuration management for Meteor applications");
 
 commands = {
-  list: require('../commands/rock-list'),
-  lint: require('../commands/rock-lint'),
-  init: require('../commands/rock-init')
+  list:     require('../commands/rock-list'),
+  lint:     require('../commands/rock-lint'),
+  init:     require('../commands/rock-init'),
+  prepare:  require('../commands/rock-prepare')
 };
 
 commands.list(program);
 commands.lint(program);
 commands.init(program);
+commands.prepare(program);
 
-/** prepare: Preps server to accept deployments **/
-program
-  .command("prepare <environment>")
-  .alias("prep")
-  .description("Prepare a server host to accept deployments")
-  .action( function(env, options) {
-    var config = _loadLocalConfigFile(env);
-    var hostNames = config.hostNames();
-    console.log("Will prepare "+hostNames.length+" host(s) for deployment:", inspect(hostNames));
-    _.each( hostNames, function(hostName) {
-      var host = new Host(config, hostName);
-      host.prepare( _endCommandCallback("Preparation") );
-    });
-  });
 
 /** deploy: Push code and configuration to server(s) **/
 program
@@ -179,25 +167,3 @@ program
 
 program.parse(process.argv);
 
-
-/**
- * Generate a callback function to be used in the CLI context as a
- * callback passed to delayed result commands. The returned function
- * accepts error as the first argument and exits the process with
- * a error code of non-zero for error, zero for success.
- *
- * @param {String} commandName      Name to use in status messages
- * @returns {Function}              Callback 
- **/
-function _endCommandCallback (commandName) {
-  return function(err) {
-    if (err) {
-      console.log( (commandName+" failed:").red.bold, inspect(err).red );
-      process.exit(1);
-    }
-    else {
-      console.log( (commandName+" succeeded!").green.bold );
-      process.exit(0);
-    }
-  };
-}
