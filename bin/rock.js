@@ -34,8 +34,7 @@ program
   .command("lint <environment>")
   .description("Check configuration file for issues")
   .action( function(env, cliOptions) {
-    var filePath = path.resolve( process.cwd(), 'deploy', env+'.rockup.json' );
-    var config = new Config(filePath);
+    var config = _loadLocalConfigFile(env);
     console.log("Configuration:\n", inspect(config, {colors:true, depth:null}));
 
     console.log("app:", config.app);
@@ -71,7 +70,7 @@ program
   .alias("prep")
   .description("Prepare a server host to accept deployments")
   .action( function(env, options) {
-    var config = new Config(env);
+    var config = _loadLocalConfigFile(env);
     var hostNames = config.hostNames();
     console.log("Will prepare "+hostNames.length+" host(s) for deployment:", inspect(hostNames));
     _.each( hostNames, function(hostName) {
@@ -88,7 +87,7 @@ program
   .option("--host <name>", "The specific host to target")
   .option("--bundle <path>", "Deploy a bundle.tar.gz already in-hand")
   .action( function(env, cliOptions) {
-      var config = new Config(env);
+      var config = _loadLocalConfigFile(env);
       cliOptions = cliOptions || {};
       var options = {};
       if ( cliOptions.host )
@@ -111,7 +110,7 @@ program
       targetRelease = "previous";     // TODO: Retrieve most recent release from history
     }
     console.log( "Will rollback to".red, targetRelease.red.bold.underline, "release.".red );
-    var config = new Config(env);
+    var config = new _loadLocalConfigFile(env);
     //Deploy.rollback(config);
   });
 
@@ -127,7 +126,7 @@ _.each(["start", "stop", "restart"], function(command) {
     .option("--host <name>", "The specific host to target")
     .option("--service <name>", "The specific service to target")
     .action( function(env, cliOptions) {
-      console.log(command+" the service in "+env);
+      var config = _loadLocalConfigFile(env);
     });
 });
 
@@ -138,7 +137,7 @@ program
   .option("--host <name>", "A specific host to target")
   .option("--service <name>", "A specific service to target")
   .action( function(env, cliOptions) {
-    var config = new Config(env);
+    var config = _loadLocalConfigFile(env);
     if ( cliOptions.host ) {
       var host = new Host(config, cliOptions.host);
       console.log("Working on host:", inspect(host));
@@ -181,6 +180,19 @@ program
   });
 
 program.parse(process.argv);
+
+
+/**
+ * Load RockUp configuration file from the expected path relative to
+ * this process' working directory.
+ *
+ * @param {String} environment  Name of target environment
+ * @returns {Config}            RockUp Config object
+ * @throws Errors associated with loading Config (non-exist, syntax)
+ **/
+function _loadLocalConfigFile (environment) {
+  return new Config( path.resolve( process.cwd(), 'deploy', environment+'.rockup.json' ) );
+}
 
 /**
  * Generate a callback function to be used in the CLI context as a
