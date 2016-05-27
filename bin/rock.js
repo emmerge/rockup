@@ -22,6 +22,7 @@ commands = {
   startstop:  require('../commands/rock-startstop'),
   status:     require('../commands/rock-status'),
   reconfig:   require('../commands/rock-reconfig'),
+  logs:       require('../commands/rock-logs'),
 };
 
 // Attach sub-commands:
@@ -32,11 +33,6 @@ commands.prepare(program);
 commands.deploy(program);
 commands.rollback(program);
 commands.startstop(program);
-
-/** logs: Tail service logs from hosts **/
-program
-  .command("logs <environment>")
-  .description("Tail service logs");
 
 /** history: Retrieve list of deployment history available on hosts **/
 program
