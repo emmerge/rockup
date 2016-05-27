@@ -21,6 +21,7 @@ commands = {
   rollback:   require('../commands/rock-rollback'),
   startstop:  require('../commands/rock-startstop'),
   status:     require('../commands/rock-status'),
+  reconfig:   require('../commands/rock-reconfig'),
 };
 
 // Attach sub-commands:
@@ -31,12 +32,6 @@ commands.prepare(program);
 commands.deploy(program);
 commands.rollback(program);
 commands.startstop(program);
-
-/** reconfig: Push only configuration changes and restart **/
-program
-  .command("reconfig <environment>")
-  .description("Push configuration only and restart");
-
 
 /** logs: Tail service logs from hosts **/
 program
