@@ -13,12 +13,13 @@ program
 
 // Define sub-commands:
 commands = {
-  list:     require('../commands/rock-list'),
-  lint:     require('../commands/rock-lint'),
-  init:     require('../commands/rock-init'),
-  prepare:  require('../commands/rock-prepare'),
-  deploy:   require('../commands/rock-deploy'),
-  rollback: require('../commands/rock-rollback')
+  list:       require('../commands/rock-list'),
+  lint:       require('../commands/rock-lint'),
+  init:       require('../commands/rock-init'),
+  prepare:    require('../commands/rock-prepare'),
+  deploy:     require('../commands/rock-deploy'),
+  rollback:   require('../commands/rock-rollback'),
+  startstop:  require('../commands/rock-startstop')
 };
 
 // Attach sub-commands:
@@ -28,25 +29,12 @@ commands.init(program);
 commands.prepare(program);
 commands.deploy(program);
 commands.rollback(program);
+commands.startstop(program);
 
 /** reconfig: Push only configuration changes and restart **/
 program
   .command("reconfig <environment>")
   .description("Push configuration only and restart");
-
-/** start, stop, restart: Run start, stop, restart commands against services **/
-_.each(["start", "stop", "restart"], function(command) {
-  program
-    .command(command+" <environment>")
-    .option("--host <name>", "The specific host to target")
-    .option("--service <name>", "The specific service to target")
-    .action( function(env, cliOptions) {
-      var config = _loadLocalConfigFile(env);
-      _.each(config.hosts.list, function(host) {
-        host.services.tasks[command]( _endCommandCallback(command) );
-      });
-    });
-});
 
 /** status: Dislay status informatin for services **/
 program
