@@ -19,7 +19,8 @@ commands = {
   prepare:    require('../commands/rock-prepare'),
   deploy:     require('../commands/rock-deploy'),
   rollback:   require('../commands/rock-rollback'),
-  startstop:  require('../commands/rock-startstop')
+  startstop:  require('../commands/rock-startstop'),
+  status:     require('../commands/rock-status'),
 };
 
 // Attach sub-commands:
@@ -36,27 +37,6 @@ program
   .command("reconfig <environment>")
   .description("Push configuration only and restart");
 
-/** status: Dislay status informatin for services **/
-program
-  .command("status <environment>")
-  .description("Display a status for services in environment")
-  .option("--host <name>", "A specific host to target")
-  .option("--service <name>", "A specific service to target")
-  .action( function(env, cliOptions) {
-    var config = _loadLocalConfigFile(env);
-    if ( cliOptions.host ) {
-      var host = config.hosts.get( cliOptions.host );
-      console.log("Working on host:", host.name);
-      host.services.run.status( function(results) {
-        console.log("Results:\n", inspect(results, {colors:true, depth:null}));
-        process.exit(0);
-      });
-
-    } else {
-      console.log("Can't do it for everyone, yet. Pass a --host");
-    }
-
-  });
 
 /** logs: Tail service logs from hosts **/
 program
