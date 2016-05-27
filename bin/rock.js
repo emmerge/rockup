@@ -11,35 +11,20 @@ program
   .version("0.0.1")
   .description("Faceted deployment and configuration management for Meteor applications");
 
-// Define sub-commands:
-commands = {
-  list:       require('../commands/rock-list'),
-  lint:       require('../commands/rock-lint'),
-  init:       require('../commands/rock-init'),
-  prepare:    require('../commands/rock-prepare'),
-  deploy:     require('../commands/rock-deploy'),
-  rollback:   require('../commands/rock-rollback'),
-  startstop:  require('../commands/rock-startstop'),
-  status:     require('../commands/rock-status'),
-  reconfig:   require('../commands/rock-reconfig'),
-  logs:       require('../commands/rock-logs'),
-  history:    require('../commands/rock-history')
-};
+// Define and attach sub-commands:
+require('../commands/rock-list') (program);
+require('../commands/rock-lint') (program);
+require('../commands/rock-init') (program);
+require('../commands/rock-prepare') (program);
+require('../commands/rock-deploy') (program);
+require('../commands/rock-rollback') (program);
+require('../commands/rock-startstop') (program);
+require('../commands/rock-status') (program);
+require('../commands/rock-reconfig') (program);
+require('../commands/rock-logs') (program);
+require('../commands/rock-history') (program);
 
-// Attach sub-commands:
-commands.list(program);
-commands.lint(program);
-commands.init(program);
-commands.prepare(program);
-commands.deploy(program);
-commands.rollback(program);
-commands.startstop(program);
-commands.status(program);
-commands.reconfig(program);
-commands.logs(program);
-commands.history(program);
-
-/** Catch-all for unhandled commands: **/
+// Catch-all for unhandled commands:
 program
   .command("*", null, {noHelp: true})
   .action( function(command, options) {
