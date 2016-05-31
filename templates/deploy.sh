@@ -26,35 +26,83 @@ sudo mv bundle app                                  # Rename bundle app (target 
 rebuild_modules () {
   MODULE_DIR="$1"
 
-  check_for_binary_modules () {
-    echo "TODO"
+  gyp_rebuild_inside_node_modules () {
+    for npmModule in ./*; do
+      cd $npmModule
+
+      isBinaryModule="no"
+      # recursively rebuild npm modules inside node_modules
+      check_for_binary_modules () {
+        if [ -f binding.gyp ]; then
+          isBinaryModule="yes"
+        fi
+
+        if [ $isBinaryModule != "yes" ]; then
+          if [ -d ./node_modules ]; then
+            cd ./node_modules
+            for module in ./*; do
+              cd $module
+              check_for_binary_modules
+              cd ..
+            done
+            cd ../
+          fi
+        fi
+      }
+
+      check_for_binary_modules
+
+      if [ $isBinaryModule = "yes" ]; then
+        echo " > $npmModule: npm install due to binary npm modules"
+        rm -rf node_modules
+        if [ -f binding.gyp ]; then
+          sudo npm install
+          sudo node-gyp rebuild || :
+        else
+          sudo npm install
+        fi
+      fi
+
+      cd ..
+    done
   }
 
-  build_dependency_modules () {
-    echo "TODO"
-  }
-
-  build_primary_modules () {
-    echo "TODO"
+  rebuild_binary_npm_modules () {
+    for package in ./*; do
+      if [ -d $package/node_modules ]; then
+        cd $package/node_modules
+          gyp_rebuild_inside_node_modules
+        cd ../../
+      elif [ -d $package/main/node_module ]; then
+        cd $package/node_modules
+          gyp_rebuild_inside_node_modules
+        cd ../../../
+      fi
+    done
   }
 
   cd ${MODULE_DIR}
   if [ -d ./npm ]; then
     cd npm
-    build_binary_npm_modules
+    rebuild_binary_npm_modules
     cd -
   fi
 
   if [ -d ./node_modules ]; then
     cd ./node_modules
-    build_dependency_modules
+    gyp_rebuild_inside_node_modules
     cd -
   fi
 
   if [ -f package.json ]; then
     sudo npm install
   fi
+
+  cd ${app_parent_dir}
 }
+
+rebuild_modules "${bundle_dir}/programs/server"
+
 
 # 3. Symlink app_parent_dir/current => app_release_dir/app
 
