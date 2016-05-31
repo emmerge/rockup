@@ -44,6 +44,11 @@
     }
   ],
 
-  "checkUp": true,
-  "checkUpDelay_s": 15
+  "hooks": {
+    "--comment": "Hooks run on the local machine",
+    "preBuild": null,
+    "preDeploy": null,
+    "postDeploy": null
+  }
+
 }
