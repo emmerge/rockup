@@ -5,6 +5,9 @@ var RockUtil = require('./util');
 var Config = require('../lib/Config');
 var inspect = require('util').inspect;
 var _ = require('underscore');
+var Spinner = require('clui').Spinner;
+var Line = require('clui').Line;
+
 
 module.exports = HistoryCommand;
 
@@ -16,6 +19,10 @@ function HistoryCommand (program) {
     .description("Deployment history")
     .action( function(environment) {
       var config = Config._loadLocalConfigFile(environment);
+
+      var spinner = new Spinner('Loading history from '+config.hosts.count+' hosts...');
+      spinner.start();
+
       var releaseMap = {};
 
       var ops = config.hosts.map( function(host) {
@@ -47,14 +54,29 @@ function HistoryCommand (program) {
           });
         });
 
+        spinner.stop();
+
         var finalMap = {};
         _.chain(releaseMap).keys().sort().reverse().each(function(k) { finalMap[k] = releaseMap[k]; });
-        console.log("Release            \tHosts           ".underline.yellow);
+
+        var headers = new Line()
+          .padding(2)
+          .column("Release".yellow.bold, 24)
+          .column("Notes".yellow.bold, 24)
+          .fill()
+          .output();
+
+        // console.log("Release            \tHosts           ".underline.yellow);
         _.each(finalMap, function(hostNames, releaseName) {
           var note = "";
-          if (hostNames.length < config.hosts.count)
+          if (hostNames.length == config.hosts.count)
             note = "* only "+hostNames.join(", ");
-          console.log(releaseName," \t",note);
+          var line = new Line()
+            .padding(2)
+            .column(releaseName, 24)
+            .column(note, 24)
+            .fill()
+            .output();
         });
         console.log("");
         process.exit(0);
