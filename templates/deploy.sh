@@ -19,7 +19,6 @@ sudo rm -rf bundle                                  # Remove any existing unpack
 sudo tar xvzf bundle.tar.gz > /dev/null             # Extract the archive (will unpack into bundle_dir)
 sudo chmod -R +x *
 sudo chown -R ${USER} ${bundle_dir}
-sudo mv bundle app                                  # Rename bundle app (target is: /opt/<%=appName%>/releases/<%=releaseName%>/app)
 
 # 2. Rebuild app npm/node dependencies
 
@@ -96,6 +95,10 @@ rebuild_modules () {
 
   if [ -f package.json ]; then
     sudo npm install
+  else
+    # backwards compat support
+    sudo npm install fibers
+    sudo npm install bcrypt
   fi
 
   cd ${app_parent_dir}
@@ -104,7 +107,12 @@ rebuild_modules () {
 rebuild_modules "${bundle_dir}/programs/server"
 
 
-# 3. Symlink app_parent_dir/current => app_release_dir/app
+# 3. Move the fully compiled bundle to being app
+
+cd ${app_release_dir}
+sudo mv bundle app                                  # Rename bundle app (target is: /opt/<%=appName%>/releases/<%=releaseName%>/app)
+
+# 4. Symlink app_parent_dir/current => app_release_dir/app
 
 cd ${app_parent_dir}
 sudo rm -f current                                  # Removes existing current link /opt/<%=appName%>/current
@@ -112,7 +120,7 @@ sudo ln -s ${app_release_dir} ./current             # Creates new current link t
 
 # PRE: app_release_dir/config contains env.sh and settings.json for each service
 
-# 4. For each service, restart the service
+# 5. For each service, restart the service
 
 <% for(var service in serviceNames) { %>
   echo "Starting Service: <%= service %>"
