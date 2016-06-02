@@ -56,18 +56,6 @@ function LintCommand (program) {
         });
       });
 
-      // console.log("Configuration:\n", inspect(config, {colors:true, depth:null}));
-      // console.log("app:", config.app);
-      // console.log("appName:", config.app.name);
-      // console.log("appPath:", config.app.path);
-      // console.log("hosts.list:", config.hosts.list);
-      // console.log("hosts.names:", config.hosts.names);
-      // console.log("host.get():", config.hosts.get('dev2.emmerge.com'));
-      // console.log("host.sshOptions():", config.hosts.get('dev2.emmerge.com').sshConfig());
-      // console.log("services:", config.services('dev2.emmerge.com'));
-      // console.log("service:", config.service('dev2.emmerge.com', 'bennett-1'));
-      // console.log("host.services.tasks.status:", config.hosts.get('dev2.emmerge.com').services.tasks.status());
-
       console.log("");
 
       function _output(header, content, clc) {
