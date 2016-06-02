@@ -2,6 +2,7 @@
 // Commands-Status -- Load stopped/running state for services
 
 var inspect = require('util').inspect;
+var Spinner = require('clui').Spinner;
 var _ = require('underscore');
 
 var RockUtil = require('./util');
@@ -16,6 +17,9 @@ function StatusCommand (program) {
     .description("Display status for running/stopped services")
     .action( function(env, cliOptions) {
       var config = Config._loadLocalConfigFile(env);
+
+      var spinner = new Spinner('Querying '+config.hosts.count+' hosts for service status...');
+      spinner.start();
 
       var ops = config.hosts.map( function(host) {
         return function (memo, cb) {
@@ -33,7 +37,7 @@ function StatusCommand (program) {
 
       // Receives map of hostname: [status string, serviceMap{}]
       function allHostsComplete ( statusMap ) {
-        // console.log("Host Status Map:\n", inspect(statusMap, {colors:true, depth:null}));
+        spinner.stop();
         console.log("");
         _.each( statusMap, function(statusDetails, hostName) {
           var status = statusDetails[0];
@@ -46,8 +50,6 @@ function StatusCommand (program) {
 
       ops.unshift({}); // memo
       ops.push(allHostsComplete);
-
-      console.log("Querying hosts for service status...");
 
       RockUtil.reduceAsync.apply(this, ops);
 
