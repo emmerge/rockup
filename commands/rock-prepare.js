@@ -1,6 +1,7 @@
 // RockUp
 // Commands-Prepare -- Prepare the server-side to accept deployments
 
+var Spinner = require('clui').Spinner;
 var Config = require('../lib/Config');
 var RockUtil = require('./util');
 
@@ -13,10 +14,16 @@ function PrepareCommand (program) {
     .description("Prepare a server host to accept deployments")
     .action( function(env, options) {
       var config = Config._loadLocalConfigFile(env);
-      console.log("Preparing "+config.hosts.count+" host(s) for deployment:", config.hosts.names);
+
+      var spinner = new Spinner('Preparing '+config.hosts.count+' host(s) for deployment...  ');
+      spinner.start();
+
       config.hosts.each( function(host) {
+        console.log(" -", host.name, "...");
         host.prepare( RockUtil._endCommandCallback("Preparation") );
+        // TODO: callback should only be fired after ALL servers have been prepped
       });
+      spinner.stop();
       console.log("");
     });
   return program;
