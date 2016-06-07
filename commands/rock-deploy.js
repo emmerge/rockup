@@ -22,8 +22,19 @@ function DeployCommand (program) {
           options.hosts = [cliOptions.host];            // Target a single host
         if ( cliOptions.bundle )
           options.bundle = cliOptions.bundle;           // Use an already-tarred app bundle
+        
         var deployment = new Deploy(config, options);
-        deployment.push( RockUtil._endCommandCallback("Deployment") );
+        deployment.push( function(err, results) {
+          console.log("\nSucceessfully deployed to", results.successful.join(', '));
+          if (results.failed.length === 0) {
+            console.log("Deployment succeeded!\n".green.bold);
+            process.exit(0);
+          } else {
+            console.log("Failed to deploy to", results.failed.join(', '));
+            console.log("Deployment failed!\n".red.bold);
+            process.exit(1);
+          }
+        });
     });
 
   return program;
