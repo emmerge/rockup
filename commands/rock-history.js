@@ -1,7 +1,7 @@
 // RockUp
 // Commands-History -- Retrieve list of upstream deployment history
 
-var RockUtil = require('./util');
+var reduceAsync = require("../lib/Async").reduce;
 var Config = require('../lib/Config');
 var inspect = require('util').inspect;
 var _ = require('underscore');
@@ -85,7 +85,7 @@ function HistoryCommand (program) {
       ops.unshift({}); // memo
       ops.push(allHostsComplete);
 
-      RockUtil.reduceAsync.apply(this, ops);
+      reduceAsync.apply(this, ops);
 
     });
 

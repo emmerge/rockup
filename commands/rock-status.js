@@ -5,7 +5,7 @@ var inspect = require('util').inspect;
 var Spinner = require('clui').Spinner;
 var _ = require('underscore');
 
-var RockUtil = require('./util');
+var reduceAsync = require("../lib/Async").reduce;
 var Config = require('../lib/Config');
 
 module.exports = StatusCommand;
@@ -51,7 +51,7 @@ function StatusCommand (program) {
       ops.unshift({}); // memo
       ops.push(allHostsComplete);
 
-      RockUtil.reduceAsync.apply(this, ops);
+      reduceAsync.apply(this, ops);
 
       function _colorizeStatus(s) {
         if (s == 'running') return s.green;
