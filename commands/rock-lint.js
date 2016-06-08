@@ -20,10 +20,11 @@ function LintCommand (program) {
   program
     .command("lint <environment>")
     .description("Check configuration file for issues")
+    .option("-d --detail", "View resulting compiled config file")
     .action( function(env, cliOptions) {
 
       console.log("Environment File Paths".yellow);
-      _output("Environment", env);
+      _output("Environment:", env);
       var filePath = Config._expectedLocalConfigFilePath(env);
       var fileExists = fs.existsSync(filePath);
       _output("RockUp Path:", Config._expectedLocalConfigFilePath(env));
@@ -41,7 +42,7 @@ function LintCommand (program) {
         if (_.isString(val)) { 
           _output(" ."+key+":", val); 
           if ( key === 'path' )
-            _output(" (exists?):", fs.existsSync(config.app.path) ? "YES".green : "NO".red);
+            _output("  -> exists?:", fs.existsSync(config.app.path) ? "YES".green : "NO".red);
         } else if (_.isObject(val)) {
           _output(" ."+key+":", "defined".yellow);
         }
@@ -50,12 +51,16 @@ function LintCommand (program) {
       console.log("\nHosts and Services".yellow);
       _output("hosts:", "("+config.hosts.count+" defined)");
       config.hosts.each( function(host) {
-        _output(" "+host.name+":", "("+host.services.count+" services)");
+        _output(" "+host.name.bold+":", "("+host.services.count+" services)");
         host.services.each( function(service) {
           _output("  "+service.name+"", "");
+          if (service.env) _output("   .env:", _.keys(service.env).join(', '));
+          if (service.settingsPath) {
+            _output("   .settingsPath:", service.settingsPath);
+            _output("   -> exists?:", fs.existsSync(service.settingsPath) ? "YES".green : "NO".red);
+          }
         });
       });
-
       console.log("");
 
       function _output(header, content, clc) {
@@ -65,6 +70,11 @@ function LintCommand (program) {
           .fill()
           .output();
       }
+
+      if (cliOptions.detail) {
+        console.log("Full Configuration:".yellow, "\n", inspect(config.toJSON(), {colors:true, depth:null}));
+        console.log("");
+      } 
 
     });
 
