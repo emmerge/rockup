@@ -1,12 +1,10 @@
 // RockUp
 // Commands-Lint -- Display details and check for errors in a RockUp file
 
-var clui = require('clui');
 var clc = require('cli-color');
-var _ = require('underscore');
-
-var inspect = require('util').inspect;
+var Line = CLUI.Line;
 var fs = require('fs');
+
 var Config = require('../lib/Config');
 
 module.exports = LintCommand;
@@ -66,7 +64,7 @@ function LintCommand (program) {
       console.log("");
 
       function _output(header, content, clc) {
-        new clui.Line().padding(2)
+        new Line().padding(2)
           .column(header, _TableHeaderWidth, _TableHeaderStyles)
           .column(content, _TableCellWidth, _TableCellStyles)
           .fill()

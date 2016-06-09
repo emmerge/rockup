@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
-var program = require("commander");
-var colors = require("colors");
-var _ = require("underscore");
+program = require('commander');
+CLUI = require('clui');
+colors = require('colors');
+_ = require('underscore');
+inspect = require('util').inspect;
 
-console.log( ("\nRockUp".green.bold + ": Faceted Meteor Deployments".green).underline, "\n" );
+console.log( ("RockUp".green.bold + ": Faceted Meteor Deployments".green).underline, "\n" );
 
 // Define CLI program:
 program

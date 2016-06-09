@@ -1,7 +1,6 @@
 // RockUp
 // Commands-List -- List target environments available
 
-var _ = require('underscore');
 var path = require('path');
 var Config = require('../lib/Config');
 

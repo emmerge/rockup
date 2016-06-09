@@ -1,7 +1,6 @@
 // RockUp
 // Commands-Rollback -- Change active server code to reference a previously deployed version
 
-var RockUtil = require('./util');
 var Config = require('../lib/Config');
 var Deploy = require('../lib/Deploy');
 

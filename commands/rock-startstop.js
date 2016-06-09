@@ -2,10 +2,7 @@
 // Commands-StartStop -- Cycle service state within target environment
 
 var Config = require('../lib/Config');
-
-var _ = require('underscore');
-var inspect = require('util').inspect;
-var Spinner = require('clui').Spinner;
+var Spinner = CLUI.Spinner;
 
 module.exports = StartStopCommand;
 

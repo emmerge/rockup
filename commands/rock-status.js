@@ -1,10 +1,7 @@
 // RockUp
 // Commands-Status -- Load stopped/running state for services
 
-var inspect = require('util').inspect;
-var Spinner = require('clui').Spinner;
-var _ = require('underscore');
-
+var Spinner = CLUI.Spinner;
 var reduceAsync = require("../lib/Async").reduce;
 var Config = require('../lib/Config');
 
@@ -57,9 +54,9 @@ function StatusCommand (program) {
       reduceAsync.apply(this, ops);
 
       function _colorizeStatus(s) {
-        if (s == 'running') return s.green;
-        else if (s == 'stopped') return s.red;
-        else return s.blue;
+        if (s == 'running') return s.green.bold;
+        else if (s == 'stopped') return s.red.bold;
+        else return s.yellow.bold;
       }
 
     });

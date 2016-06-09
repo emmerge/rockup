@@ -3,11 +3,9 @@
 
 var reduceAsync = require("../lib/Async").reduce;
 var Config = require('../lib/Config');
-var inspect = require('util').inspect;
-var _ = require('underscore');
-var Spinner = require('clui').Spinner;
-var Line = require('clui').Line;
 
+var Spinner = CLUI.Spinner;
+var Line = CLUI.Line;
 
 module.exports = HistoryCommand;
 

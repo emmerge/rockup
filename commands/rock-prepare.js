@@ -4,9 +4,6 @@
 var Config = require('../lib/Config');
 var reduceAsync = require('../lib/Async').reduce;
 
-var inspect = require('util').inspect;
-//var _ = require('underscore');
-
 module.exports = PrepareCommand;
 
 function PrepareCommand (program) {
