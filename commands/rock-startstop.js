@@ -14,6 +14,7 @@ function StartStopCommand (program) {
   _.each(["start", "stop", "restart"], function(command) {
     program
       .command(command+" <environment>")
+      .description("On host, "+command+" services running this app")
       .option("--host <name>", "The specific host to target")
       .action( function(env, cliOptions) {
         var config = Config._loadLocalConfigFile(env);
