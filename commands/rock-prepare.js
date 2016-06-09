@@ -15,20 +15,11 @@ function PrepareCommand (program) {
     .action( function(env, cliOptions) {
       var config = Config._loadLocalConfigFile(env);
 
-      var hosts;
-      if ( cliOptions.host ) {
-        var host = config.hosts.get(cliOptions.host);
-        if (!host) {
-          console.error("Cannot find host:".red.bold, cliOptions.host, "\n");
-          process.exit(1);
-        }
-        hosts = [host];
-      } else {
-        hosts = config.hosts.list;
-      }
+      var hosts = cliOptions.host ? [config.hosts.get(cliOptions.host)] : config.hosts.list;
       var numHosts = hosts.length;
 
       var operations = _.map(hosts, function(host) {
+        if (!host) { console.error("Cannot find host".red.bold, "\n"); process.exit(1); }
         return function (memo, cb) {
           host.prepare( function(results) {
             if (results[host.name].error)

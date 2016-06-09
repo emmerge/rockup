@@ -15,7 +15,7 @@ function StartStopCommand (program) {
       .option("--host <name>", "Specific host to target")
       .action( function(env, cliOptions) {
         var config = Config._loadLocalConfigFile(env);
-        var hosts = cliOptions.host ? hosts = [config.hosts.get(cliOptions.host)] : config.hosts.list;
+        var hosts = cliOptions.host ? [config.hosts.get(cliOptions.host)] : config.hosts.list;
 
         var gerund = { 'start': 'Starting', 'stop': 'Stopping', 'restart': 'Restarting'}[command];
         var spinner = new Spinner(gerund+' services on '+hosts.length+' host(s)...');

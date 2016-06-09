@@ -12,14 +12,17 @@ function StatusCommand (program) {
   program
     .command("status <environment>")
     .description("Display status for running/stopped services")
+    .option("--host <name>", "Limit action to specific host")
     .action( function(env, cliOptions) {
       var config = Config._loadLocalConfigFile(env);
 
-      var numHosts = config.hosts.count;
+      var hosts = cliOptions.host ? [config.hosts.get(cliOptions.host)] : config.hosts.list;
+      var numHosts = hosts.length;
+
       var spinner = new Spinner('Querying '+numHosts+' host(s) for service status...');
       spinner.start();
 
-      var ops = config.hosts.map( function(host) {
+      var ops = _.map(hosts, function(host) {
         return function (memo, cb) {
           host.status( function(err, status, map) {
             --numHosts;
