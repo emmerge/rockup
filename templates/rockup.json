@@ -1,10 +1,10 @@
 {
   "environment": "production",
   "app": {
-    "name": "thred",
-    "path": "../app",
+    "name": "myApp",
+    "path": "../path/to/meteor/root",
     "binaryNpmModules": {
-      "thred-core": ["node-gyp", "canvas"]
+      "yourDep": ["bin1", "bin2"]
     }
   },
 
@@ -12,43 +12,37 @@
     "hosts": {
       "username": "ubuntu"
     },
-    "env": {
-      "MONGO_URL":        "mongodb://db.domain.com/database",
-      "MONGO_OPLOG_URL":  "mongodb://db.domain.com/local",
-      "ROOT_URL":         "https://your.app.domain.com/"
-    },
-    "confs": {
-      "nginx": "./conf/emmerge-app.nginx",
-      "upstart": "./conf/emmerge-app.upstart"
+    "services": {
+      "settingsPath": "./production.settings.json",
+      "env": {
+        "MONGO_URL":        "mongodb://db.domain.com/database",
+        "MONGO_OPLOG_URL":  "mongodb://db.domain.com/local",
+        "ROOT_URL":         "https://your.app.domain.com/"
+      }
     }
   },
 
   "hosts": [
     {
-      "name": "app1.emmerge.com",
+      "name": "app1.yourdomain.com",
       "services": [
-        { "name": "thred-0", "env": { "PORT": 8200 } },
-        { "name": "thred-1", "env": { "PORT": 8201 } },
-        { "name": "thred-2", "env": { "PORT": 8202 } },
-        { "name": "thred-3", "env": { "PORT": 8203 } }
+        { "name": "app-1", "settingsPath": "./production.settings.app1.json", "env": { "PORT": 8080 } },
+        { "name": "app-2", "env": { "PORT": 8081 } }
       ]
     },
     {
-      "name": "app2.emmerge.com",
+      "name": "app2.yourdomain.com",
       "services": [
-        { "name": "thred-0", "env": { "PORT": 8200 } },
-        { "name": "thred-1", "env": { "PORT": 8201 } },
-        { "name": "thred-2", "env": { "PORT": 8202 } },
-        { "name": "thred-3", "env": { "PORT": 8203 } }
+        { "name": "app-1", "env": { "PORT": 8080, "MONGO_URL": "mongodb://gibraltar.co/db13" } },
+        { "name": "app-2", "env": { "PORT": 8081 } }
       ]
     }
   ],
-
+  
   "hooks": {
     "--comment": "Hooks run on the local machine",
-    "preBuild": null,
+    "preBuild": "../path/to/script.sh",
     "preDeploy": null,
     "postDeploy": null
   }
-
 }
