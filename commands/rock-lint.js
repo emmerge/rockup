@@ -58,6 +58,8 @@ function LintCommand (program) {
           if (service.settingsPath) {
             _output("   .settingsPath:", service.settingsPath);
             _output("   -> exists?:", fs.existsSync(service.settingsPath) ? "YES".green : "NO".red);
+          } else {
+            _output("   .settingsPath:", "not defined".yellow);
           }
         });
       });
