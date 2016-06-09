@@ -24,17 +24,16 @@ function StartStopCommand (program) {
           hosts = config.hosts.list;
 
         var gerund = { 'start': 'Starting', 'stop': 'Stopping', 'restart': 'Restarting'}[command];
-        var spinner = new Spinner(gerund+' services on '+hosts.length+' hosts...');
+        var spinner = new Spinner(gerund+' services on '+hosts.length+' host(s)...');
         spinner.start();
-        
 
         var remain = hosts.length;
         var hostMap = {};
         _.each(hosts, function(host) {
           host[command]( function(result) {
             --remain;
+            spinner.message(gerund+' services on '+remain+' host(s)...');
             hostMap[host.name] = result;
-
             if (remain === 0) {
               spinner.stop();
               console.log("");
@@ -46,7 +45,6 @@ function StartStopCommand (program) {
             }
           });
         });
-
 
       });
   });

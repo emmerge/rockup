@@ -18,12 +18,15 @@ function StatusCommand (program) {
     .action( function(env, cliOptions) {
       var config = Config._loadLocalConfigFile(env);
 
-      var spinner = new Spinner('Querying '+config.hosts.count+' hosts for service status...');
+      var numHosts = config.hosts.count;
+      var spinner = new Spinner('Querying '+numHosts+' host(s) for service status...');
       spinner.start();
 
       var ops = config.hosts.map( function(host) {
         return function (memo, cb) {
           host.status( function(err, status, map) {
+            --numHosts;
+            spinner.message('Querying '+numHosts+' host(s) for service status...');
             if (err) { 
               cb(err); 
             }
