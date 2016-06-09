@@ -1,9 +1,6 @@
 // RockUp
 // Meteor Service Deployment
 
-_ = require('underscore');
-inspect = require('util').inspect;
-
 RockUp = {
   Config: require('./lib/Config'),
   Host: require('./lib/Host'),
