@@ -11,8 +11,14 @@ function ListCommand (program) {
     .command("list")
     .description("List target environments available")
     .action( function () {
-      var environments = Config.list( path.resolve(process.cwd(), 'deploy') );
-      console.log("Environments:".yellow, environments.join(", "), "\n");
+      try {
+        var environments = Config.list( path.resolve(process.cwd(), 'deploy') );
+        console.log("Environments:".yellow, environments.join(", "), "\n");
+      } catch (err) {
+        console.error("Cannot list environments:".red, err.message);
+        console.error("Ensure you've initialized with", "rockup init".yellow, "first\n");
+        process.exit(1);
+      }
     });
 
   return program;
