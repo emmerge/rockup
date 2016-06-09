@@ -9,14 +9,15 @@ function InitCommand (program) {
   program
     .command("init <environment>")
     .description("Initialize a local configuration")
-    .option("--upstart", "Add upstart configuration template")
-    .option("--nginx", "Add nginx configuration template")
+    // .option("--upstart", "Add upstart configuration template")
+    // .option("--nginx", "Add nginx configuration template")
     .action( function(env, options) {
       console.log("Creating local rockup configs for ", env.cyan, "environment");
-      var files = ['rockup','meteor'];  // upstart, nginx
-      if (options.upstart) files.push('upstart');
-      if (options.nginx) files.push('nginx');
+      var files = ['rockup','meteor'];  // TODO: upstart, nginx
+      // if (options.upstart) files.push('upstart');
+      // if (options.nginx) files.push('nginx');
       Config.initialize(env, files);
+      console.log("");
     });
 
   return program;
