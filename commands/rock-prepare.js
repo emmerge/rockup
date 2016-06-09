@@ -1,9 +1,11 @@
 // RockUp
 // Commands-Prepare -- Prepare the server-side to accept deployments
 
-var Spinner = require('clui').Spinner;
 var Config = require('../lib/Config');
-var RockUtil = require('./util');
+var reduceAsync = require('../lib/Async').reduce;
+
+var inspect = require('util').inspect;
+//var _ = require('underscore');
 
 module.exports = PrepareCommand;
 
@@ -12,19 +14,50 @@ function PrepareCommand (program) {
     .command("prepare <environment>")
     .alias("prep")
     .description("Prepare a server host to accept deployments")
-    .action( function(env, options) {
+    .option("--host <name>", "Specify an individual host to prep")
+    .action( function(env, cliOptions) {
       var config = Config._loadLocalConfigFile(env);
 
-      var spinner = new Spinner('Preparing '+config.hosts.count+' host(s) for deployment...  ');
-      spinner.start();
+      var hosts;
+      if ( cliOptions.host ) {
+        var host = config.hosts.get(cliOptions.host);
+        if (!host) {
+          console.error("Cannot find host:".red.bold, cliOptions.host, "\n");
+          process.exit(1);
+        }
+        hosts = [host];
+      } else {
+        hosts = config.hosts.list;
+      }
+      var numHosts = hosts.length;
 
-      config.hosts.each( function(host) {
-        console.log(" -", host.name, "...");
-        host.prepare( RockUtil._endCommandCallback("Preparation") );
-        // TODO: callback should only be fired after ALL servers have been prepped
+      var operations = _.map(hosts, function(host) {
+        return function (memo, cb) {
+          host.prepare( function(results) {
+            if (results[host.name].error)
+              memo[host.name] = false;
+            else
+              memo[host.name] = _.every(results[host.name].history, function(obj) {
+                return obj.status === 'SUCCESS';
+              });
+            cb();
+          });
+        };
       });
-      spinner.stop();
-      console.log("");
+
+      function _allHostsComplete (hostMap) {
+        console.log("\nPreparation complete for "+numHosts+" host(s):");
+        _.each(hostMap, function(success, hostName) {
+          console.log(hostName.bold, "\t", success ? 'SUCCESS'.green.bold : 'FAIL'.red.bold);  
+        });
+        console.log("");
+        process.exit(0);
+      }
+
+      operations.unshift({});
+      operations.push(_allHostsComplete);
+      reduceAsync.apply(this, operations);
+      
     });
   return program;
 }
