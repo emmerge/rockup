@@ -6,8 +6,6 @@ colors = require('colors');
 _ = require('underscore');
 inspect = require('util').inspect;
 
-console.log( ("RockUp".green.bold + ": Faceted Meteor Deployments".green).underline, "\n" );
-
 // Define CLI program:
 program
   .version("0.0.1")
@@ -51,5 +49,5 @@ program
     }
   });
 
+console.log();
 program.parse(process.argv);
-
