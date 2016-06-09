@@ -24,6 +24,18 @@ require('../commands/rock-reconfig') (program);
 require('../commands/rock-logs') (program);
 require('../commands/rock-history') (program);
 
+// Explicit subcommand help
+program
+  .command('help [command]')
+  .description("Display usage and help for commands")
+  .action( function(command) {
+    var commandDef = command ? _.findWhere(program.commands, {_name: command}) : null;
+    if (command && commandDef)
+      require('child_process').spawn("rock", [command, "-h"], {stdio: [process.stdin, process.stdout, process.stderr] });
+    else
+      program.help();
+  });
+
 // Catch-all for unhandled commands:
 program
   .command("*", null, {noHelp: true})
