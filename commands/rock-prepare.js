@@ -8,8 +8,7 @@ module.exports = PrepareCommand;
 
 function PrepareCommand (program) {
   program
-    .command("prepare <environment>")
-    .alias("prep")
+    .command("prep <environment>")
     .description("Prepare a server host to accept deployments")
     .option("--host <name>", "Specify an individual host to prep")
     .action( function(env, cliOptions) {

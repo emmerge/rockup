@@ -17,7 +17,6 @@ _TableCellStyles = [clc.white];
 function InfoCommand (program) {
   program
     .command("info")
-    .alias("check")
     .arguments("<environment>")
     .option("-d --detail", "View resulting compiled config file")
     .description("Check configuration file for issues")

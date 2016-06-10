@@ -9,7 +9,6 @@ module.exports = DeployCommand;
 function DeployCommand (program) {
   program
     .command("deploy <environment>")
-    .alias("push")
     .description("Deploy application to environment")
     .option("--host <name>", "The specific host to target")
     .option("--bundle <path>", "Deploy a bundle.tar.gz already in-hand")

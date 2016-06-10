@@ -10,9 +10,8 @@ function RollbackCommand (program) {
 
   program
     .command("rollback <environment>")
-    .alias("undo")
-    .description("Rollback to a previous deployment")
     .option("-r, --release <name>", "Name of release to roll back to (defaults to previous)")
+    .description("Rollback to a previous deployment")
     .action( function(env, options) {
       var targetRelease = options.release;
       if (! targetRelease) {
