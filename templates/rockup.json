@@ -1,8 +1,8 @@
 {
-  "environment": "production",
+  "environment": "<%= envName %>",
   "app": {
-    "name": "myApp",
-    "path": "../path/to/meteor/root",
+    "name": "<%= appName %>",
+    "path": "<%= appPath %>",
     "binaryNpmModules": {
       "yourDep": ["bin1", "bin2"]
     }
@@ -13,7 +13,7 @@
       "username": "ubuntu"
     },
     "services": {
-      "settingsPath": "./production.settings.json",
+      "settingsPath": "./<%= settingsFile %>",
       "env": {
         "MONGO_URL":        "mongodb://db.domain.com/database",
         "MONGO_OPLOG_URL":  "mongodb://db.domain.com/local",
@@ -26,14 +26,14 @@
     {
       "name": "app1.yourdomain.com",
       "services": [
-        { "name": "app-1", "settingsPath": "./production.settings.app1.json", "env": { "PORT": 8080 } },
+        { "name": "app-1", "env": { "PORT": 8080 } },
         { "name": "app-2", "env": { "PORT": 8081 } }
       ]
     },
     {
       "name": "app2.yourdomain.com",
       "services": [
-        { "name": "app-1", "env": { "PORT": 8080, "MONGO_URL": "mongodb://gibraltar.co/db13" } },
+        { "name": "app-1", "env": { "PORT": 8080 } },
         { "name": "app-2", "env": { "PORT": 8081 } }
       ]
     }
@@ -41,7 +41,7 @@
   
   "hooks": {
     "--comment": "Hooks run on the local machine",
-    "preBuild": "../path/to/script.sh",
+    "preBuild": null,
     "preDeploy": null,
     "postDeploy": null
   }
