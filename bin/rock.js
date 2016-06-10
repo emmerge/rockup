@@ -12,17 +12,17 @@ program
   .description("Faceted deployment and configuration management for Meteor applications");
 
 // Define and attach sub-commands:
-require('../commands/rock-list') (program);
-require('../commands/rock-lint') (program);
 require('../commands/rock-init') (program);
 require('../commands/rock-prepare') (program);
 require('../commands/rock-deploy') (program);
+require('../commands/rock-history') (program);
 require('../commands/rock-rollback') (program);
 require('../commands/rock-startstop') (program);
 require('../commands/rock-status') (program);
 require('../commands/rock-reconfig') (program);
 require('../commands/rock-logs') (program);
-require('../commands/rock-history') (program);
+require('../commands/rock-list') (program);
+require('../commands/rock-lint') (program);
 
 // Explicit subcommand help
 program
@@ -34,19 +34,6 @@ program
       require('child_process').spawn("rock", [command, "-h"], {stdio: [process.stdin, process.stdout, process.stderr] });
     else
       program.help();
-  });
-
-// Catch-all for unhandled commands:
-program
-  .command("*", null, {noHelp: true})
-  .action( function(command, options) {
-    var commandDef = _.findWhere(program.commands, {_name: command});
-    if (commandDef)
-      console.log("Command", command.underline, "not yet implemented");
-    else {
-      console.log("No such command", command.underline);
-      process.exit(1);
-    }
   });
 
 console.log();
