@@ -13,74 +13,87 @@ function HistoryCommand (program) {
 
   program
     .command("history <environment>")
-    .alias("hist")
-    .description("Deployment history")
-    .action( function(environment) {
+    .option("--host <name>", "Limit history lookup to single host")
+    .description("View available deployment history")
+    .action( function(environment, cliOptions) {
       var config = Config._loadLocalConfigFile(environment);
 
-      var spinner = new Spinner('Loading history from '+config.hosts.count+' hosts...');
+      var hosts = cliOptions.host ? [config.hosts.get(cliOptions.host)] : config.hosts.list;
+      var numHosts = hosts.length;
+
+      var spinner = new Spinner('Pulling history from '+numHosts+' host(s)...');
       spinner.start();
 
       var releaseMap = {};
 
-      var ops = config.hosts.map( function(host) {
+      var ops = _.map(hosts, function(host) {
         return function (memo, cb) {
-          host.history( function (err, releases) {    // releases: {current: 'releaseName', list: ['name1','name2','name3']}
+          host.history( function (err, hostReleases) {    // releases: {current: 'releaseName', list: ['name1','name2','name3']}
+            --numHosts;
+            spinner.message('Pulling history from '+numHosts+' host(s)...');
             if (err) { cb(err); }
             else {
-              releases = _.map(releases.list, function(r) { 
-                if (r == releases.current)
-                  return r+" <=".cyan.bold;
-                else
-                  return r;
+              _.each(hostReleases.list, function(releaseName) {
+                var rInfo = { name: releaseName, host: host.name };
+                if (releaseName == hostReleases.current) { rInfo.current = true; }
+                memo.push( rInfo );
               });
-              memo[host.shortName] = releases;
               cb();
             }
           });
         };
       });
 
-      // Receives map of {hostName: [releases]}
-      function allHostsComplete ( memo ) {
-        _.each(memo, function(releases, hostName) {
-          _.each(releases, function(r) {
-            if (releaseMap[r])
-              releaseMap[r].push(hostName);
-            else
-              releaseMap[r] = [hostName];
-          });
+      // Completion function receives array releases that will contain
+      // duplicates. Items in array formatted like:
+      // [ { name: 'r20160610_631983', current: true, host: 'app1.com' }, ... ]
+      function allHostsComplete ( allReleases ) {
+        var releaseMap = {};
+        _.each(allReleases, function(rInfo) {
+          if ( releaseMap[rInfo.name] ) {
+            // Release duplicate. Merge:
+            releaseMap[rInfo.name].hosts.push( config.hosts.get(rInfo.host).shortName );
+            releaseMap[rInfo.name].hosts = releaseMap[rInfo.name].hosts.sort();
+            if (rInfo.current) releaseMap[rInfo.name].current = rInfo.current;
+          } else {
+            // Unseen release. Insert:
+            rInfo.hosts = [ config.hosts.get(rInfo.host).shortName ];
+            delete rInfo.host;
+            releaseMap[rInfo.name] = _(rInfo).omit('name');
+          }
         });
 
         spinner.stop();
-
-        var finalMap = {};
-        _.chain(releaseMap).keys().sort().reverse().each(function(k) { finalMap[k] = releaseMap[k]; });
-
         var headers = new Line()
           .padding(2)
-          .column("Release".yellow.bold, 24)
-          .column("Notes".yellow.bold, 24)
+          .column("Release".yellow.bold.underline, 24)
+          .column("Hosts".yellow.bold.underline, 40)
           .fill()
           .output();
 
-        // console.log("Release            \tHosts           ".underline.yellow);
-        _.each(finalMap, function(hostNames, releaseName) {
-          var note = "";
-          if (hostNames.length == config.hosts.count)
-            note = "* only "+hostNames.join(", ");
+        _.each(releaseMap, function(rInfo, releaseName) {
+          var displayName = rInfo.current ? releaseName.cyan.bold : releaseName;
+          var hostsNote = "All  ("+rInfo.hosts.length+")";
+
+          if ( hosts.length > rInfo.hosts.length ) {
+            // At least 1 env host does not have this release
+            displayName = displayName.italic;
+            hostsNote = "Some ("+rInfo.hosts.length+") "+rInfo.hosts.join(", ").dim;
+          }
+
           var line = new Line()
             .padding(2)
-            .column(releaseName, 24)
-            .column(note, 24)
+            .column(displayName, 24)
+            .column(hostsNote, 40)
             .fill()
             .output();
         });
-        console.log("");
+
+        console.log("  * currents highlighted".dim, "\n");
         process.exit(0);
       }
 
-      ops.unshift({}); // memo
+      ops.unshift([]); // memo
       ops.push(allHostsComplete);
 
       reduceAsync.apply(this, ops);
