@@ -22,7 +22,7 @@ require('../commands/rock-status') (program);
 require('../commands/rock-reconfig') (program);
 require('../commands/rock-logs') (program);
 require('../commands/rock-list') (program);
-require('../commands/rock-lint') (program);
+require('../commands/rock-info') (program);
 
 // Explicit subcommand help
 program

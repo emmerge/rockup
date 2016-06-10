@@ -1,5 +1,5 @@
 // RockUp
-// Commands-Lint -- Display details and check for errors in a RockUp file
+// Commands-Info -- Display details and check for errors in a RockUp file
 
 var clc = require('cli-color');
 var Line = CLUI.Line;
@@ -7,18 +7,23 @@ var fs = require('fs');
 
 var Config = require('../lib/Config');
 
-module.exports = LintCommand;
+module.exports = InfoCommand;
 
 _TableHeaderWidth = 24;
 _TableCellWidth = 60;
 _TableHeaderStyles = [clc.cyan];
 _TableCellStyles = [clc.white];
 
-function LintCommand (program) {
+function InfoCommand (program) {
   program
-    .command("lint <environment>")
-    .description("Check configuration file for issues")
+    .command("info")
+    .alias("check")
+    .arguments("<environment>")
     .option("-d --detail", "View resulting compiled config file")
+    .description("Check configuration file for issues")
+    .on('--help', function() {
+      console.log("  blah\n");
+    })
     .action( function(env, cliOptions) {
 
       console.log("Environment File Paths".yellow);
