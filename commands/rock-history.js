@@ -49,7 +49,7 @@ function HistoryCommand (program) {
       // duplicates. Items in array formatted like:
       // [ { name: 'r20160610_631983', current: true, host: 'app1.com' }, ... ]
       function allHostsComplete ( allReleases ) {
-        allReleases = _(allReleases).sortBy('name');
+        allReleases = _(allReleases).sortBy('name').reverse();
         var releaseMap = {};
         _.each(allReleases, function(rInfo) {
           if ( releaseMap[rInfo.name] ) {
