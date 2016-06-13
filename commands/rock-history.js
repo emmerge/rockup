@@ -14,7 +14,24 @@ function HistoryCommand (program) {
   program
     .command("history <environment>")
     .option("--host <name>", "Limit history lookup to single host")
-    .description("View available deployment history")
+    .option("--all", "Only list releases available on all hosts")
+    .option("--current", "Return only the name of the current release")
+    .option("--previous", "Return only the name of the release prior to current")
+    .description("View deployment history")
+    .on("--help", function(){
+      console.log("  Examples:\n");
+      console.log("    $ rock history production          # List all releases");
+      console.log("    $ rock history staging --all       # List only releases on all hosts");
+      console.log("    $ rock history --current           # Output current release");
+      console.log("\n  Notes:\n");
+      console.log("    History can vary per-host in multi-host environments. Use the --all");
+      console.log("    flag to limit output to releases that are eligible for rollback on");
+      console.log("    all hosts.\n");
+      console.log("    The --current and --previous flags imply --all unless used in");
+      console.log("    conjunction with --host");
+      console.log();
+    })
+
     .action( function(environment, cliOptions) {
       var config = Config._loadLocalConfigFile(environment);
 
