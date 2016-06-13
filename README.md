@@ -7,13 +7,13 @@ Provides tools to:
 
 * Deploy Meteor appications on your own servers
 * Manage apps as services
-* Push configuration to single or multi- instance deployments
+* Push configuration to single- or multi-instance deployments
 
-_Pre-implementation, proposed CLI features described in this doc._
+_RockUp is still pre-release software._
 
 Objectives:
 
-* Parity with mup
+* Parity with mup for deployments
 * Support for multiple on-box services of same application on same server
 * Support for shared/default configuration with overrides
 * Ability to reconfigure supporting services nginx, upstart from tool
@@ -51,13 +51,21 @@ run on each host, and configuration for those entities.
 A project will have one RockUp file for each target environment. Its sections
 are:
 
+### environment
+
+Define the name of the environment. This should match the filename and is already
+injected for you when invoking `rock init`. For example, your production environment
+should be described in a rockup file "production.rockup.json" and the `environment`
+configuration variable should be "production".
+
 ### app
 
 Defines details about the *software* package deployed.
 
 * **name** The name of your application. Used in filenames, references.
-* **path** The path, typically relative to the rockup file, to the app source
-  locally (e.g., "~/git/myproject", "../app", etc.)
+* **path** The local path, relative to the rockup file, to the app source
+  (e.g., "~/git/myproject", "../app", etc.). Full paths (e.g., "/code/myproject")
+  are acceptable.
 * **binaryNpmModules**: An object describing any binary dependencies your project
   may have, as they will require special rebuilding on any target host.
 
@@ -69,8 +77,7 @@ settings, etc. that will be used as the basis for all similar configuration late
 on in the file.
 
 * **hosts** Object defining default values for all members of `hosts`
-* **env** Object defining default environment vars for all services
-* **confs** (WIP) default configuration files to include per-host
+* **services** Object defining default vars for all services (`env` and/or `settingsPath`)
 
 ### hosts
 
@@ -89,14 +96,23 @@ here, directly, in the future.
 ### services
 
 Each host can specify any number of services to run. A service is a single instance
-of the application code, which a distinct name and configurably different environment
+of the application code with a distinct name and (optionally) different environment
 variables. The keys for each service are:
 
-* **name** Name of the service. Uses in init scripts. No spaces.
+* **name** Name of the service. Used in init scripts. No spaces.
+* **settingsPath** Local path to a Meteor settings.json for this service.
+
+By default, invocations to `rock init` will create bare Meteor settings file with a
+filename which includes the environment (e.g., "production.settings.json"). So, for
+an environment named production, the default rockup file will specify a `settingsPath`
+of "./production.settings.json". You can override this globally in `defaults` or
+per-service.
+
 * **env** Object definining the environment variables that will be applied for this
   service instance only.
 
-Here's a sample `hosts` declaration that specifies two hosts each with two services:
+Here's a sample `hosts` declaration that specifies two hosts each with two services.
+Services on the second host have overridden settings paths:
 
 ```
 "hosts": [
@@ -112,30 +128,52 @@ Here's a sample `hosts` declaration that specifies two hosts each with two servi
     "name": "app2.mydomain.com",
     "username": "mylogin",
     "services": [
-      { "name": "myapp1", "env": { "PORT": 8081 } },
-      { "name": "myapp2", "env": { "PORT": 8082 } }
+      { "name": "myapp1", "settingsPath": "./alternate1.settings.json", "env": { "PORT": 8081 } },
+      { "name": "myapp2", "settingsPath": "./alternate2.settings.json", "env": { "PORT": 8082 } }
     ]
   }
 ]
 ```
 
-### deploy
+### hooks
 
-*This section is optional.* Specify deploy-specific configurations.
+_(Work in progress)_
 
-* **pingService** Boolean. When set, RockUp will ping the specified PORT
-  to ensure your application is up and bound. Default is false, which falls
-  back to using the `service status` mechanism on machine to verify deploy.
-* **pingWait** Number of seconds to wait after restart before attempting to
-  ping the service port.
+Specify scripts that will be execute a key moments in the build and deploy process.
+These can be useful for moving prerequisite code around or housecleaning your build
+machine before and after.
+
+* **preBuild** Run prior to invoking `meteor build` to build the app bundle
+* **postBuild** Run immediately following bundle creation
+* **preDeploy** Run prior to connecting to hosts and deploying
+* **postDeploy** Run immediately after completion of deployment
+
+Note that **postBuild** and **preDeploy** are -- for most users -- the same slice of time,
+but some developers may choose to build and bundle the application in a custom fashion,
+and provide a path to the bundle to calls to `rock deploy`. Users with this use case are
+given the **preDeploy** hook for any preparation they need prior to deployment.
+
+### Verification
+
+You can use the `rock info` command to view the details and vet your rockup file.
+This command will verify local paths to your application, Meteor settings, and other
+files exist and are accurate. It will also display to you the configuration variables
+each service will receive, and highlight features of your environment.
+
+This can be an invaluable tool when making changes to your environment's configuration
+which will make sure your changes are valid.
+
+The `--detail` (or `-d`) flag will output the compiled JSON rockup file, which includes
+the full definitions with values from `defaults` injected where needed. This can be
+useful for debugging configuration quirks.
 
 
-## Prepare Hosts
+## Installing On Host Servers
 
 Once your environment is well-described in a rockup.json file, you will want
 to prepare your host servers to receive deployments:
 
-`rock prepare production`
+`rock prep production`
 
 This command logs onto your host servers and prepares app service directories
 that will receive code pushes, store configuration, and serve bundled versions
@@ -146,6 +184,16 @@ Prepare performs these actions:
 * Creates directory under "/opt" (e.g., "/opt/myapp"), which will contain
   source code, release histories, and configurations
 * Registers an upstart service for each service specified in rockup configuration
+
+Preparation should be performed each time you add a new host or add a new service
+to an existing host. The steps it performs are idempotent and can be re-run without
+danger.
+
+By default, `rock prep` will run this setup on _every_ host described in the rockup
+file. It is possible to limit the invocation to a single host by specifying `--host`
+on the command, such as:
+
+`rock prep production --host prod2.myco.com`
 
 
 ## Deployment
@@ -163,30 +211,132 @@ The steps of a deployment are:
 3. Copy configuration for each service into place on host
 4. Restart each service specified
 
-(WIP) you can also target a specific deployment to a specific host: `rock deploy production --host app1`
+Similar to the prepare command, you may target deployment to a specific host using
+the `--host` CLI flag (e.g., `rock deploy production --host app1.com`).
 
+If you have a custom process for building Meteor application bundles or have an app
+bundle on hand, you can skip the _build_ portion of deployment by providing the
+path to the existing bundle on the command-line. Bundles must be gzipped tarballs
+containing the output of a `meteor build` invocation to work properly:
+
+`rock deploy production --bundle ./path/to/my/custom/bundle.tar.gz`
+
+Deployment happens to all hosts in parallel.
+
+### Configuration-Only Deployment
+
+The `rock deploy` command will bundle and push your application code alongside your
+configuration. If you've only made changes to configuration, however, it can be
+significantly faster to push only configuration. For that, we have `rock reconfig`.
+
+Usage: `rock reconfig production`
+
+Reconfiguration is a simple subset of deployment which:
+
+1. Copies configuration over existing configuration _for the current release_
+2. And restarts each service
+
+Configuration changes this is useful are:
+
+* **Environment Variables**: Changes to `hosts.services.env` in rockup file
+* **Meteor Settings**: Changes to settings.json
+
+Like deployment, you can also limit reconfiguration to a single host using `--host`.
 
 ## Recovery
 
-Get a history of successful deployments: `rock history production`
+### Release History
 
-Rollback the last deployment: `rock rollback production`
-
-
-## Service Management
-
-Reconfigure and restart: `rock config production`  (-h, -s allowed)
-
-Take upstart actions against services (still supporting -h, -s, too):
+You can ask your hosts for a list of past deployments using the history command. This
+command will SSH onto each host specified in the rockup.json file and query the list
+of existing releases. Example with output:
 
 ```
-$> rock status production       # Query upstart status of all production services
-$> rock start production        # Start all production app services
-$> rock stop production         # Stop all production app services
-$> rock restart production      # Restart all production app services
+$> rock history production
+
+  Release                 Hosts
+  r20160610_203648        All (3)
+  r20160605_185924        All (3)
+  r20160531_182809        All (3)
+  r20160531_180542        Some (1) dev1
+  * currents highlighted
 ```
 
-Tail logs: `rock logs production` (-h, -s probably best)
+The `history` command will reveal which hosts the releases exists on, as well, so you can
+make decisions for rollback, etc.
+
+### Release Rollback
+
+You can rollback to the previous release from the command-line:
+
+`rock rollback production`
+
+You can also rollback to a _specific_ previous release:
+
+`rock rollback production --release r20160605_185924`
+
+Rolling back takes the following steps on each host:
+
+1. Changes the /opt/myapp/current symlink to point to specified release
+2. Restarts all services
+
+
+## Service Life Cycle Commands
+
+### Status
+
+You can check the running status of your application services using `rock status`.
+The command will output the status of every host and service in your environment:
+
+```
+$> rock status production
+
+app1.emmerge.com   running   { 'app-0': 'running', 'app-1': 'running' }
+app2.emmerge.com   stopped   { 'app-0': 'stopped', 'app-1': 'stopped' }
+app3.emmerge.com   partial   { 'app-0': 'running', 'app-1': 'stopped' }
+```
+
+Possible statuses include:
+
+* **running** All services on host running
+* **stopped** All services on host not running
+* **partial** Services are in different status on host
+* **unknown** Services specified in rockup file cannot be found/checked on host
+
+This tool can be used to diagnose issues in your environment.
+
+### Start, Stop, Restart
+
+You can directly manipulate the status of your running services using the 
+lifecycle commands: `rock start`, `rock stop`, and `rock restart`. The command
+will return a listing of command success for each service on each host:
+
+```
+$> rock start production
+
+```
+
+The array of service results for each host will include boolean values indicating
+whether or not the command succeeded for each service.
+
+Depending on the service management toolset of your host, you can receive failures
+for some perfectly acceptable cases:
+
+* Service does not exist -- check rockup file
+* Trying to start/stop a service that is already started/stopped -- check status
+
+### Logging
+
+Your services will log on your machine to the configured upstart service directory.
+By default, the file is named of the form "/var/log/upstart/yourapp.log" and will have
+log rotation enabled (depending on host configuration).
+
+You can tail these logs from the host machine yourself, or get a quick glance through
+the `rockup logs` command.
+
+This command will log onto hosts and tail the service logs for running/active services
+to your console. To cut back on noise, if it is applicable to your debugging case, you
+can limit the log output using the `--host` flag.
 
 
 
