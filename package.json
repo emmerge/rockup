@@ -19,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "archiver": "^1.0.0",
+    "async": "^2.0.0-rc.6",
     "cli-color": "^1.1.0",
     "clui": "^0.3.1",
     "colors": "^1.1.2",
