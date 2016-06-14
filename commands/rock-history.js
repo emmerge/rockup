@@ -1,9 +1,9 @@
 // RockUp
 // Commands-History -- Retrieve list of upstream deployment history
 
-var async = require('async');
 var Config = require('../lib/Config');
 
+var async = require('async');
 var Spinner = CLUI.Spinner;
 var Line = CLUI.Line;
 
@@ -40,6 +40,8 @@ function HistoryCommand (program) {
 /**
  * Perform the history operation.
  *
+ * @params {String} environment       The RockUp environment name
+ * @params {Object} cliOptions        The Commander CLI options
  **/
 function _gatherHistory(environment, cliOptions) {
   var config = Config._loadLocalConfigFile(environment);
