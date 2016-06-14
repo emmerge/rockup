@@ -2,6 +2,7 @@
 // Commands-Status -- Load stopped/running state for services
 
 var Config = require('../lib/Config');
+var _getHosts = require('../commands/util')._getHosts;
 
 var async = require('async');
 var Spinner = CLUI.Spinner;
@@ -74,15 +75,3 @@ function _gatherStatuses (environment, cliOptions) {
   }
 }
 
-/**
- * Return a list of Hosts that will be used in this invocation. Can
- * be altered by user specifying a host limitation or using host-
- * specifying options on the command line.
- *
- * @params {Config} config      The environment configuration in use
- * @params {Object} cliOptions  The commander options 
- * @returns {Array Host} List of target hosts
- **/
-function _getHosts(config, cliOptions) {
-  return cliOptions.host ? [config.hosts.get(cliOptions.host)] : config.hosts.list;
-}

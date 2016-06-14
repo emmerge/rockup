@@ -5,25 +5,16 @@ var inspect = require('util').inspect;
 
 Util = {
   /**
-   * Generate a callback function to be used in the CLI context as a
-   * callback passed to delayed result commands. The returned function
-   * accepts error as the first argument and exits the process with
-   * a error code of non-zero for error, zero for success.
+   * Return a list of Hosts that will be used in this invocation. Can
+   * be altered by user specifying a host limitation or using host-
+   * specifying options on the command line.
    *
-   * @param {String} commandName      Name to use in status messages
-   * @returns {Function}              Callback 
+   * @params {Config} config      The environment configuration in use
+   * @params {Object} cliOptions  The commander options 
+   * @returns {Array Host} List of target hosts
    **/
-  _endCommandCallback: function (commandName) {
-    return function(err) {
-      if (err) {
-        console.log( (commandName+" failed:").red.bold, inspect(err).red );
-        process.exit(1);
-      }
-      else {
-        console.log( (commandName+" succeeded!").green.bold );
-        process.exit(0);
-      }
-    };
+  _getHosts: function (config, cliOptions) {
+    return cliOptions.host ? [config.hosts.get(cliOptions.host)] : config.hosts.list;
   }
 };
 
