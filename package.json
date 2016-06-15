@@ -2,7 +2,12 @@
   "name": "rockup",
   "version": "0.0.1",
   "description": "Deploy and configure Meteor applications",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/emmerge/rockup.git"
+  },
   "main": "index.js",
+  "preferGlobal": true,
   "bin": {
     "rock": "./bin/rock.js"
   },
