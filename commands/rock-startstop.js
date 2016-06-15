@@ -24,7 +24,7 @@ function StartStopCommand (program) {
         var remain = hosts.length;
         var hostMap = {};
         _.each(hosts, function(host) {
-          host[command]( function(result) {
+          host[command]( function(err, result) {
             --remain;
             spinner.message(gerund+' services on '+remain+' host(s)...');
             hostMap[host.name] = result;
