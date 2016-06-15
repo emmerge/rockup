@@ -89,6 +89,13 @@ function _gatherHistory(environment, cliOptions) {
     else
       releaseList = _.sortBy( _onAnyHost(hostMap), 'name' ).reverse();
 
+    if (releaseList.length === 0) {
+      console.log( ("No releases found on "+_(hostMap).keys().join(", ")).yellow.bold);
+      console.log("Has "+("rock prep "+environment).underline+" been run?");
+      console.log();
+      process.exit(1);
+    }
+
     var headers = new Line()
       .padding(2)
       .column("Release".yellow.bold.underline, 24)
