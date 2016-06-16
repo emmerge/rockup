@@ -1,9 +1,8 @@
-#!/bin/bash
+# n.b. this is Bourne shell not bash
 
-config_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-settings_path="${config_dir}/<%= settingsJson %>"
+settings_path="<%= settings_path %>"
 
 <% for(var key in env) { -%>
 export <%- key %>="<%- env[key] %>"
 <% } -%>
-export METEOR_SETTINGS=$(<${settings_path})
+export METEOR_SETTINGS="$(cat "${settings_path}")"
