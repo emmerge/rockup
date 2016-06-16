@@ -15,7 +15,7 @@ function StartStopCommand (program) {
     program
       .command(actionName+" <environment>")
       .description("On host, "+actionName+" services running this app")
-      .option("--host <name>", "Target a single host from environment")
+      .option("-H, --host <name>", "Target a single host from environment")
       // .option("--service <name>", "Specify individual service to "+actionName)
       .action( function(environment, cliOptions) {
         _performAction(actionName, environment, cliOptions);

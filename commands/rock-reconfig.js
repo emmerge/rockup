@@ -10,7 +10,7 @@ function ReconfigCommand (program) {
 
   program
     .command("reconfig <environment>")
-    .option("--host <name>", "Reconfigure a specific host")
+    .option("-H, --host <name>", "Reconfigure a specific host")
     .description("Change live configuration and restart")
     .action( function(environment, cliOptions) {
         var config = Config._loadLocalConfigFile(environment);

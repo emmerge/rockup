@@ -9,7 +9,7 @@ function LogsCommand (program) {
   program
     .command("logs <environment>")
     .description("Tail service logs")
-    .option("--host <name>", "Tails logs on an individual host")
+    .option("-H, --host <name>", "Tails logs on an individual host")
     .option("--service <name>", "Limits output to one running service")
     .action( function(environment, cliOptions) {
       var config = Config._loadLocalConfigFile(environment);

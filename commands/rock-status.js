@@ -14,7 +14,7 @@ function StatusCommand (program) {
   program
     .command("status <environment>")
     .description("Display status for running/stopped services")
-    .option("--host <name>", "Limit action to specific host")
+    .option("-H, --host <name>", "Limit action to specific host")
     .action( _gatherStatuses );
 
   return program;

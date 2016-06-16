@@ -12,7 +12,7 @@ function PrepareCommand (program) {
   program
     .command("prep <environment>")
     .description("Prepare a server host to accept deployments")
-    .option("--host <name>", "Specify an individual host to prep")
+    .option("-H, --host <name>", "Specify an individual host to prep")
     .on("--help", function(){
       console.log("  Examples:\n");
       console.log("    $ rock prep production               # Prepare all hosts");

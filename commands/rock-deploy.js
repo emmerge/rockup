@@ -10,7 +10,7 @@ function DeployCommand (program) {
   program
     .command("deploy <environment>")
     .description("Deploy application to environment")
-    .option("--host <name>", "The specific host to target")
+    .option("-H, --host <name>", "The specific host to target")
     .option("--bundle <path>", "Deploy a bundle.tar.gz already in-hand")
     .action( function(env, cliOptions) {
         var config = Config._loadLocalConfigFile(env);

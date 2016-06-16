@@ -14,7 +14,7 @@ function HistoryCommand (program) {
 
   program
     .command("history <environment>")
-    .option("--host <name>", "Limit history lookup to single host")
+    .option("-H, --host <name>", "Limit history lookup to single host")
     .option("--all", "Only list releases available on all hosts")
     // .option("--current", "Return only the name of the current release")
     // .option("--previous", "Return only the name of the release prior to current")
