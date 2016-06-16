@@ -6,9 +6,11 @@ colors = require('colors');
 _ = require('underscore');
 inspect = require('util').inspect;
 
+var version = require('../package.json').version;
+
 // Define CLI program:
 program
-  .version("0.0.1")
+  .version( version )
   .description("Faceted deployment and configuration management for Meteor applications");
 
 // Define and attach sub-commands:
@@ -31,10 +33,29 @@ program
   .action( function(command) {
     var commandDef = command ? _.findWhere(program.commands, {_name: command}) : null;
     if (command && commandDef)
-      require('child_process').spawn("rock", [command, "-h"], {stdio: [process.stdin, process.stdout, process.stderr] });
-    else
-      program.help();
+      _commandHelp(command);
+    else 
+      _myHelp();
   });
 
 console.log();
-program.parse(process.argv);
+if (process.argv.length > 2) {
+  program.parse(process.argv);
+} else {
+  _title("Usage");
+  program.help();
+}
+
+function _title (sub) {
+  console.log("RockUp".green.bold, sub ? sub.bold : '');
+}
+
+function _myHelp () {
+  _title("General Help");
+  program.help();
+}
+
+function _commandHelp (command) {
+  _title("rock-"+command);
+  require('child_process').spawn("rock", [command, "-h"], {stdio: [process.stdin, process.stdout, process.stderr] });
+}
