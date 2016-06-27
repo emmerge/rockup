@@ -124,8 +124,8 @@ sudo ln -s ${app_release_dir} ./current             # Creates new current link t
 
 <% for(var service in serviceNames) { %>
   echo "Starting Service: <%= service %>"
-  sudo stop <%= service %> || :
-  sudo start <%= service %> || :
+  sudo service <%= service %> stop || :
+  sudo service <%= service %> start || :
 <% } %>
 
 # chown to support dumping heapdump and etc
