@@ -66,8 +66,7 @@ Defines details about the *software* package deployed.
 * **path** The local path, relative to the rockup file, to the app source
   (e.g., "~/git/myproject", "../app", etc.). Full paths (e.g., "/code/myproject")
   are acceptable.
-* **binaryNpmModules**: An object describing any binary dependencies your project
-  may have, as they will require special rebuilding on any target host.
+* **arch** The target build architecture to use (default will match local machine)
 
 ### defaults
 
@@ -152,6 +151,8 @@ Note that **postBuild** and **preDeploy** are -- for most users -- the same slic
 but some developers may choose to build and bundle the application in a custom fashion,
 and provide a path to the bundle to calls to `rock deploy`. Users with this use case are
 given the **preDeploy** hook for any preparation they need prior to deployment.
+
+_Work in progress also coming on server-side hook scripts._
 
 ### Verification
 
