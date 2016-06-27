@@ -3,9 +3,7 @@
   "app": {
     "name": "<%= appName %>",
     "path": "<%= appPath %>",
-    "binaryNpmModules": {
-      "yourDep": ["bin1", "bin2"]
-    }
+    "arch": "os.linux.x86_64"
   },
 
   "defaults": {
