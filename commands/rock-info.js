@@ -50,6 +50,11 @@ function InfoCommand (program) {
         }
       });
 
+      console.log("\nHooks".yellow);
+      _(config.hooks).each( function(hook, event) {
+        _output(event+":", hook.scriptPath);
+      });
+      
       console.log("\nHosts and Services".yellow);
       _output("hosts:", "("+config.hosts.count+" defined)");
       config.hosts.each( function(host) {
