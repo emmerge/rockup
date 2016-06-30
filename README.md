@@ -145,6 +145,21 @@ machine before and after.
 * **preBuild** Run prior to invoking `meteor build` to build the app bundle
 * **postDeploy** Run immediately after completion of deployment
 
+The **preBuild** script will receive command-line arguments, in order:
+
+1. Environment Name (from rockup.json)
+2. Application Name (from rockup.json)
+3. Path to application root
+
+The **postDeploy** script will receive the command-line arguments, in order:
+
+1. Environment Name (from rockup.json)
+2. Application Name (from rockup.json)
+3. Release Name (the r-prefixed timestamp of the release folder on targets)
+
+If your hook scripts exit with non-zero status, deployment will be held up at the time
+of invocation. You can use this to cancel a deployment if pre-build prerequisites are not
+met or to note a deployment failure after a post-deployment check.
 
 _Work in progress also coming on server-side hook scripts._
 
