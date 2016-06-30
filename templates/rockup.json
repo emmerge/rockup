@@ -40,8 +40,6 @@
   "hooks": {
     "--comment": "Hooks run on the local machine",
     "preBuild": null,
-    "postBuild": null,
-    "preDeploy": null,
     "postDeploy": null
   }
 }

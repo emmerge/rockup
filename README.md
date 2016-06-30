@@ -143,14 +143,8 @@ These can be useful for moving prerequisite code around or housecleaning your bu
 machine before and after.
 
 * **preBuild** Run prior to invoking `meteor build` to build the app bundle
-* **postBuild** Run immediately following bundle creation
-* **preDeploy** Run prior to connecting to hosts and deploying
 * **postDeploy** Run immediately after completion of deployment
 
-Note that **postBuild** and **preDeploy** are -- for most users -- the same slice of time,
-but some developers may choose to build and bundle the application in a custom fashion,
-and provide a path to the bundle to calls to `rock deploy`. Users with this use case are
-given the **preDeploy** hook for any preparation they need prior to deployment.
 
 _Work in progress also coming on server-side hook scripts._
 
