@@ -58,7 +58,7 @@ function DeployCommand (program) {
             process.exit(1);
           } else {
             // Successful deployment to all hosts:
-            console.log("\nSucceessfully deployed to", results.successful.join(', '));
+            console.log("\n => Success!".green.bold, "Deployed to hosts:", results.successful.join(', '), "\n");
             process.exit(0);
           }
         });
