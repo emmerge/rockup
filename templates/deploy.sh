@@ -120,14 +120,6 @@ sudo ln -s ${app_release_dir} ./current             # Creates new current link t
 
 # PRE: app_release_dir/config contains env.sh and settings.json for each service
 
-# 5. For each service, restart the service
-
-<% for(var service in serviceNames) { %>
-  echo "Starting Service: <%= service %>"
-  sudo service <%= service %> stop || :
-  sudo service <%= service %> start || :
-<% } %>
-
 # chown to support dumping heapdump and etc
 cd ${app_release_dir}
 sudo chown -R meteoruser app
