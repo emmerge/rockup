@@ -21,7 +21,7 @@
     "node"
   ],
   "author": "Emmerge, Inc.",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "archiver": "^1.0.0",
     "async": "^2.0.0-rc.6",
