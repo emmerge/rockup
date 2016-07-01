@@ -138,12 +138,15 @@ Services on the second host have overridden settings paths:
 
 _(Work in progress)_
 
-Specify scripts that will be execute a key moments in the build and deploy process.
+Specify scripts that will be execute at key moments in the build and deploy process.
 These can be useful for moving prerequisite code around or housecleaning your build
 machine before and after.
 
 * **preBuild** Run prior to invoking `meteor build` to build the app bundle
 * **postDeploy** Run immediately after completion of deployment
+
+Each hook script should be an executable file. It will be invoked from the RockUp
+deployment process directly.
 
 The **preBuild** script will receive command-line arguments, in order:
 
