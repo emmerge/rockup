@@ -2,6 +2,7 @@
 // Commands-History -- Retrieve list of upstream deployment history
 
 var Config = require('../lib/Config');
+var Deploy = require('../lib/Deploy');
 var _getHosts = require('../commands/util')._getHosts;
 
 var async = require('async');
@@ -95,6 +96,9 @@ function _gatherHistory(environment, cliOptions) {
       console.log();
       process.exit(1);
     }
+
+    var nowName = "r"+Deploy._nowStamp();
+    console.log("A release deployed now would be named "+nowName.cyan+"\n");
 
     var headers = new Line()
       .padding(2)
