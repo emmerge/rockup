@@ -1,6 +1,6 @@
 {
   "name": "rockup",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Deploy and configure Meteor applications",
   "repository": {
     "type": "git",
