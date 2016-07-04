@@ -3,6 +3,10 @@ RockUp ChangeLog
 
 RockUp is used in production, but is still in development itself.
 
+## v0.0.7 - ???
+
+* Optimize: rock-logs now uses server log muxing for performance, accuracy
+
 ## v0.0.6 - July 1, 2016
 
 * Add: preBuild and postDeploy hook script support
